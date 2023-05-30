@@ -51,17 +51,18 @@ object MyPostDestination : NavigationDestination {
 }
 
 @Composable
-fun MyPostScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, navigateToDetail: (Int) -> Unit) {
-    MyPostContent(modifier = modifier, navigateToHome = navigateToHome, navigateToDetail = navigateToDetail)
+fun MyPostScreen(modifier: Modifier = Modifier, navigateToHome: () -> Unit, navigateToPostPet: () -> Unit, navigateToDetail: (Int) -> Unit) {
+    MyPostContent(modifier = modifier, navigateToHome = navigateToHome, navigateToPostPet = navigateToPostPet, navigateToDetail = navigateToDetail)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyPostContent(modifier: Modifier = Modifier, navigateToHome: () -> Unit, navigateToDetail: (Int) -> Unit) {
+fun MyPostContent(modifier: Modifier = Modifier, navigateToHome: () -> Unit, navigateToPostPet: () -> Unit,navigateToDetail: (Int) -> Unit) {
     Scaffold(modifier = modifier, bottomBar = {
         OPetNavigationBar(
             currentRoute = MyPostDestination.route,
-            navigateToHome = navigateToHome
+            navigateToHome = navigateToHome,
+            navigateToPostPet = navigateToPostPet
         )
     }, topBar = { MyPostTopBar() }) { paddingValues ->
         LazyColumn(
@@ -169,6 +170,6 @@ fun ActionDropDown(modifier: Modifier = Modifier, expanded: Boolean, onDismissRe
 @Composable
 fun MyPostContentPreview() {
     OPetTheme {
-        MyPostContent(navigateToHome = {}, navigateToDetail = {})
+        MyPostContent(navigateToHome = {}, navigateToDetail = {}, navigateToPostPet = {})
     }
 }

@@ -37,6 +37,7 @@ fun HomeScreen(
     navigateToProfile: () -> Unit,
     navigateToDetail: (Int) -> Unit,
     navigateToViewAllPet: () -> Unit,
+    navigateToPostPet: () -> Unit,
     navigateToMyPost: () -> Unit,
 ) {
     HomeContent(
@@ -44,6 +45,7 @@ fun HomeScreen(
         navigateToProfile = navigateToProfile,
         navigateToDetail = navigateToDetail,
         navigateToViewAllPet = navigateToViewAllPet,
+        navigateToPostPet = navigateToPostPet,
         navigateToMyPost = navigateToMyPost,
     )
 }
@@ -54,13 +56,15 @@ fun HomeContent(
     navigateToProfile: () -> Unit,
     navigateToDetail: (Int) -> Unit,
     navigateToViewAllPet: () -> Unit,
+    navigateToPostPet: () -> Unit,
     navigateToMyPost: () -> Unit,
 ) {
     val fakeData = FakeDataSource.dummyHomePetResources
     Scaffold(bottomBar = {
         OPetNavigationBar(
             currentRoute = HomeDestination.route,
-            navigateToMyPost = navigateToMyPost
+            navigateToMyPost = navigateToMyPost,
+            navigateToPostPet = navigateToPostPet
         )
     }) { paddingValues ->
         Column(
@@ -132,6 +136,7 @@ fun HomeContentPreview() {
             navigateToProfile = {},
             navigateToDetail = {},
             navigateToViewAllPet = {},
+            navigateToPostPet = {},
             navigateToMyPost = {})
     }
 }

@@ -19,6 +19,10 @@ import com.c23ps008.opet.ui.screen.my_post.MyPostDestination
 import com.c23ps008.opet.ui.screen.my_post.MyPostScreen
 import com.c23ps008.opet.ui.screen.pet_detail.PetDetailDestination
 import com.c23ps008.opet.ui.screen.pet_detail.PetDetailScreen
+import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageDestination
+import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageScreen
+import com.c23ps008.opet.ui.screen.post_camera.PostCameraDestination
+import com.c23ps008.opet.ui.screen.post_camera.PostCameraScreen
 import com.c23ps008.opet.ui.screen.post_pet.PostPetDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetScreen
 import com.c23ps008.opet.ui.screen.profile.ProfileDestination
@@ -27,6 +31,7 @@ import com.c23ps008.opet.ui.screen.register.RegisterDestination
 import com.c23ps008.opet.ui.screen.register.RegisterScreen
 import com.c23ps008.opet.ui.screen.splash.SplashDestination
 import com.c23ps008.opet.ui.screen.splash.SplashScreen
+import java.net.URLEncoder
 
 @Composable
 fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -67,7 +72,8 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 navigateToProfile = { navController.navigate(ProfileDestination.route) },
                 navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
                 navigateToViewAllPet = { navController.navigate(AllPetDestination.route) },
-                navigateToMyPost = { navController.navigate(MyPostDestination.route) })
+                navigateToMyPost = { navController.navigate(MyPostDestination.route) },
+                navigateToPostPet = { navController.navigate(PostCameraDestination.route) })
         }
         composable(ProfileDestination.route) {
             ProfileScreen(onNavigateUp = { navController.navigateUp() })
@@ -91,8 +97,29 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         composable(MyPostDestination.route) {
             MyPostScreen(
                 navigateToHome = { navController.navigate(HomeDestination.route) },
-                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") }
+                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
+                navigateToPostPet = { navController.navigate(PostCameraDestination.route) }
             )
+        }
+        composable(PostCameraDestination.route) {
+            PostCameraScreen(onCaptureSuccess = {
+                navController.navigate(
+                    "${ConfirmImageDestination.route}/${
+                        URLEncoder.encode(
+                            it,
+                            "UTF-8"
+                        )
+                    }"
+                )
+            }, onNavigateUp = { navController.navigateUp() })
+        }
+        composable(
+            route = ConfirmImageDestination.routeWithArgs,
+            arguments = listOf(navArgument(ConfirmImageDestination.imgUriArg) {
+                type = NavType.StringType
+            })
+        ) {
+            ConfirmImageScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
