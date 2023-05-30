@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
 }
 
 android {
@@ -34,6 +35,7 @@ android {
         jvmTarget = '17'
     }
     buildFeatures {
+        buildConfig true
         compose true
     }
     composeOptions {
@@ -78,11 +80,11 @@ dependencies {
     // coil
     implementation("io.coil-kt:coil-compose:2.4.0")
     // google maps
-    // implementation 'com.google.maps.android:maps-compose:2.11.2'
+    implementation 'com.google.maps.android:maps-compose:2.11.2'
     // Maps SDK for Android
-    // implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     // Compose utils library for Clustering, etc.
-    // implementation 'com.google.maps.android:maps-compose-utils:2.11.2'
+    implementation 'com.google.maps.android:maps-compose-utils:2.11.2'
     // the widgets library for ScaleBar, etc.
-    // implementation 'com.google.maps.android:maps-compose-widgets:2.11.2'
+    implementation 'com.google.maps.android:maps-compose-widgets:2.11.2'
 }

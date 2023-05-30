@@ -15,6 +15,8 @@ import com.c23ps008.opet.ui.screen.home.HomeDestination
 import com.c23ps008.opet.ui.screen.home.HomeScreen
 import com.c23ps008.opet.ui.screen.login.LoginDestination
 import com.c23ps008.opet.ui.screen.login.LoginScreen
+import com.c23ps008.opet.ui.screen.map_nearby_pet.MapNearbyPetDestination
+import com.c23ps008.opet.ui.screen.map_nearby_pet.MapNearbyPetScreen
 import com.c23ps008.opet.ui.screen.my_post.MyPostDestination
 import com.c23ps008.opet.ui.screen.my_post.MyPostScreen
 import com.c23ps008.opet.ui.screen.pet_detail.PetDetailDestination
@@ -120,6 +122,9 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             })
         ) {
             ConfirmImageScreen(onNavigateUp = { navController.navigateUp() })
+        }
+        composable(MapNearbyPetDestination.route) {
+            MapNearbyPetScreen()
         }
     }
 }
