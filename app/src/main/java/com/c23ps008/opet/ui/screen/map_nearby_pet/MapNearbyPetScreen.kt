@@ -70,6 +70,10 @@ fun MapNearbyPetScreen(
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+    var permissionGranted by remember {
+        mutableStateOf(false)
+    }
+
     val permissionDialogQueue = permissionsViewModel.visiblePermissionDialogQueue
 
     val requestPermission = rememberLauncherForActivityResult(
@@ -80,11 +84,14 @@ fun MapNearbyPetScreen(
                     permission = permission,
                     isGranted = perms[permission] == true
                 )
+                permissionGranted = true
             }
         })
 
     LaunchedEffect(Unit) {
-        requestPermission.launch(permissionsToRequest)
+        if (!permissionGranted) {
+            requestPermission.launch(permissionsToRequest)
+        }
     }
 
     permissionDialogQueue.reversed().forEach { permission ->
@@ -115,10 +122,12 @@ fun MapNearbyPetScreen(
         )
     }
 
-    MapNearbyPetContent(
-        modifier = modifier,
-        onNavigateUp = onNavigateUp,
-    )
+    if(permissionGranted) {
+        MapNearbyPetContent(
+            modifier = modifier,
+            onNavigateUp = onNavigateUp,
+        )
+    }
 }
 
 @Composable
