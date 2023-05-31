@@ -1,11 +1,13 @@
 package com.c23ps008.opet.ui.screen.map_nearby_pet
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
+import android.location.Location
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
@@ -50,8 +52,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.rememberCameraPositionState
 
 object MapNearbyPetDestination : NavigationDestination {
     override val route: String = "map/nearby-pet"
@@ -131,6 +137,7 @@ fun MapNearbyPetScreen(
     }
 }
 
+@SuppressLint("MissingPermission")
 @Composable
 fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
     val context = LocalContext.current
@@ -139,6 +146,20 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
     val mapProperties by remember {
         mutableStateOf(MapProperties(isMyLocationEnabled = true))
     }
+
+    val locationFusedClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+
+    var userLocation by remember {
+        mutableStateOf(Location("NearbyPetProvider").apply {
+            // -6.208499708116554, 106.84122912722904
+            latitude = -6.208499708116554
+            longitude = 106.84122912722904
+        })
+    }
+
+    val cameraPositionState = rememberCameraPositionState()
 
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
@@ -149,6 +170,26 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
                 Log.d("appDebug", "Denied")
             }
         })
+
+    LaunchedEffect(Unit) {
+        locationFusedClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                userLocation = location
+            }
+        }
+    }
+
+    LaunchedEffect(userLocation) {
+        val cameraPosition = CameraPosition.fromLatLngZoom(
+            LatLng(
+                userLocation.latitude,
+                userLocation.longitude,
+            ),
+            12f
+        )
+        cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000)
+
+    }
 
     Scaffold(
         modifier = modifier,
@@ -171,9 +212,16 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
                                 intentSenderRequest
                             )
                         },
-                        onEnabled = {})
+                        onEnabled = {
+                            locationFusedClient.lastLocation.addOnSuccessListener { location ->
+                                if (location != null) {
+                                    userLocation = location
+                                }
+                            }
+                        })
                     return@GoogleMap true
-                }
+                },
+                cameraPositionState = cameraPositionState
             )
         }
     }
