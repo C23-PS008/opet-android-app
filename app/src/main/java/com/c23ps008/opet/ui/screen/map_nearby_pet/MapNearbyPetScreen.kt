@@ -15,31 +15,50 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.c23ps008.opet.R
+import com.c23ps008.opet.data.FakeDataSource
+import com.c23ps008.opet.data.PetData
 import com.c23ps008.opet.ui.navigation.NavigationDestination
 import com.c23ps008.opet.ui.screen.AppViewModelProvider
 import com.c23ps008.opet.ui.screen.permissions_dialog.LocationPermissionTextProvider
@@ -57,7 +76,10 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import kotlinx.coroutines.launch
 
 object MapNearbyPetDestination : NavigationDestination {
     override val route: String = "map/nearby-pet"
@@ -104,7 +126,6 @@ fun MapNearbyPetScreen(
         PermissionsDialogScreen(
             permissionTextProvider = when (permission) {
                 Manifest.permission.ACCESS_FINE_LOCATION -> LocationPermissionTextProvider()
-                Manifest.permission.ACCESS_COARSE_LOCATION -> LocationPermissionTextProvider()
                 else -> return@forEach
             },
             isPermanentlyDeclined = !ActivityCompat.shouldShowRequestPermissionRationale(
@@ -137,9 +158,11 @@ fun MapNearbyPetScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
 fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
+    val jakartaPos = LatLng(-6.208499708116554, 106.84122912722904)
     val context = LocalContext.current
     var isMapLoaded by remember { mutableStateOf(false) }
 
@@ -153,9 +176,8 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
 
     var userLocation by remember {
         mutableStateOf(Location("NearbyPetProvider").apply {
-            // -6.208499708116554, 106.84122912722904
-            latitude = -6.208499708116554
-            longitude = 106.84122912722904
+            latitude = jakartaPos.latitude
+            longitude = jakartaPos.longitude
         })
     }
 
@@ -170,6 +192,9 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
                 Log.d("appDebug", "Denied")
             }
         })
+
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         locationFusedClient.lastLocation.addOnSuccessListener { location ->
@@ -188,42 +213,110 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
             12f
         )
         cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000)
-
     }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = { MapNearbyTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            // Map
-            GoogleMap(
-                modifier = Modifier.fillMaxSize(),
-                onMapLoaded = { isMapLoaded = true },
-                properties = mapProperties,
-                onMyLocationButtonClick = {
-                    checkLocationSetting(
-                        context,
-                        onDisabled = { intentSenderRequest ->
-                            settingResultRequest.launch(
-                                intentSenderRequest
-                            )
-                        },
-                        onEnabled = {
-                            locationFusedClient.lastLocation.addOnSuccessListener { location ->
-                                if (location != null) {
-                                    userLocation = location
+    DetailBottomSheet(
+        petData = FakeDataSource.dummyHomePetResources[0],
+        scaffoldState = scaffoldState
+    ) {
+        Scaffold(
+            modifier = modifier,
+            topBar = { MapNearbyTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                // Map
+                GoogleMap(
+                    modifier = Modifier.fillMaxSize(),
+                    onMapLoaded = { isMapLoaded = true },
+                    properties = mapProperties,
+                    onMyLocationButtonClick = {
+                        checkLocationSetting(
+                            context,
+                            onDisabled = { intentSenderRequest ->
+                                settingResultRequest.launch(
+                                    intentSenderRequest
+                                )
+                            },
+                            onEnabled = {
+                                locationFusedClient.lastLocation.addOnSuccessListener { location ->
+                                    if (location != null) {
+                                        userLocation = location
+                                    }
                                 }
+                            })
+                        return@GoogleMap true
+                    },
+                    cameraPositionState = cameraPositionState
+                ) {
+                    Marker(
+                        state = MarkerState(position = jakartaPos),
+                        title = "Jakarta Pos",
+                        snippet = "Marker in Jakarta Post",
+                        onClick = {
+                            coroutineScope.launch {
+                                scaffoldState.bottomSheetState.expand()
                             }
-                        })
-                    return@GoogleMap true
-                },
-                cameraPositionState = cameraPositionState
-            )
+                            return@Marker true
+                        }
+                    )
+                }
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailBottomSheet(
+    modifier: Modifier = Modifier,
+    petData: PetData,
+    scaffoldState: BottomSheetScaffoldState,
+    content: @Composable () -> Unit,
+) {
+    BottomSheetScaffold(
+        modifier = modifier,
+        sheetPeekHeight = 0.dp,
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            Row(
+                modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier
+                        .width(100.dp)
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(12.dp)),
+                    contentScale = ContentScale.Crop,
+                    painter = painterResource(id = petData.pet_image),
+                    contentDescription = null
+                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = petData.name)
+                            Text(text = petData.pet_breed)
+                        }
+                        Text(text = "2 KM Near you")
+                    }
+                    FilledTonalButton(modifier = Modifier.fillMaxWidth(), onClick = { }) {
+                        Text(text = "View Detail")
+                    }
+                }
+            }
+        }
+    ) {
+        content()
     }
 }
 

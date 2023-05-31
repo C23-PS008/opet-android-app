@@ -29,7 +29,7 @@ fun SplashScreen(
     navigateToHome: () -> Unit,
     navigateToGetStarted: () -> Unit,
 ) {
-    val isAuth = true
+    val isAuth = false
 
     LaunchedEffect(key1 = true) {
         delay(2500L)
