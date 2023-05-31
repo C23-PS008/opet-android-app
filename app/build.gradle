@@ -83,6 +83,8 @@ dependencies {
     implementation 'com.google.maps.android:maps-compose:2.11.2'
     // Maps SDK for Android
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    // location
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
     // Compose utils library for Clustering, etc.
     implementation 'com.google.maps.android:maps-compose-utils:2.11.2'
     // the widgets library for ScaleBar, etc.
