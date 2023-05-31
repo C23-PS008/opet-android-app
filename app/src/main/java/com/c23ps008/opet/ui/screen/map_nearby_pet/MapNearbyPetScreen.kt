@@ -40,7 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.c23ps008.opet.R
 import com.c23ps008.opet.ui.navigation.NavigationDestination
 import com.c23ps008.opet.ui.screen.AppViewModelProvider
-import com.c23ps008.opet.ui.screen.permissions_dialog.CameraPermissionTextProvider
+import com.c23ps008.opet.ui.screen.permissions_dialog.LocationPermissionTextProvider
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsDialogScreen
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.theme.OPetTheme
@@ -84,7 +84,7 @@ fun MapNearbyPetScreen(
                     permission = permission,
                     isGranted = perms[permission] == true
                 )
-                permissionGranted = true
+                permissionGranted = perms[permission] == true
             }
         })
 
@@ -97,7 +97,8 @@ fun MapNearbyPetScreen(
     permissionDialogQueue.reversed().forEach { permission ->
         PermissionsDialogScreen(
             permissionTextProvider = when (permission) {
-                Manifest.permission.CAMERA -> CameraPermissionTextProvider()
+                Manifest.permission.ACCESS_FINE_LOCATION -> LocationPermissionTextProvider()
+                Manifest.permission.ACCESS_COARSE_LOCATION -> LocationPermissionTextProvider()
                 else -> return@forEach
             },
             isPermanentlyDeclined = !ActivityCompat.shouldShowRequestPermissionRationale(
@@ -122,7 +123,7 @@ fun MapNearbyPetScreen(
         )
     }
 
-    if(permissionGranted) {
+    if (permissionGranted) {
         MapNearbyPetContent(
             modifier = modifier,
             onNavigateUp = onNavigateUp,
