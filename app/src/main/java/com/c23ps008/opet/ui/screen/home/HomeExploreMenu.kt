@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.c23ps008.opet.R
 
 @Composable
-fun HomeExploreMenu(modifier: Modifier = Modifier, navigateToMap: () -> Unit = {}) {
+fun HomeExploreMenu(modifier: Modifier = Modifier, navigateToMapNearby: () -> Unit = {}) {
     val primaryColor = MaterialTheme.colorScheme.primary
     Column(modifier = modifier
         .drawBehind {
@@ -58,7 +58,7 @@ fun HomeExploreMenu(modifier: Modifier = Modifier, navigateToMap: () -> Unit = {
                 text = stringResource(R.string.explore_nearby_pet),
                 style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
             )
-            Button(onClick = { navigateToMap() }, modifier = Modifier.padding(start = 4.dp)) {
+            Button(onClick = { navigateToMapNearby() }, modifier = Modifier.padding(start = 4.dp)) {
                 Row(
                     modifier = Modifier.padding(vertical = 2.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -35,6 +35,7 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToProfile: () -> Unit,
+    navigateToMapNearby: () -> Unit,
     navigateToDetail: (Int) -> Unit,
     navigateToViewAllPet: () -> Unit,
     navigateToPostPet: () -> Unit,
@@ -43,6 +44,7 @@ fun HomeScreen(
     HomeContent(
         modifier = modifier,
         navigateToProfile = navigateToProfile,
+        navigateToMapNearby = navigateToMapNearby,
         navigateToDetail = navigateToDetail,
         navigateToViewAllPet = navigateToViewAllPet,
         navigateToPostPet = navigateToPostPet,
@@ -54,6 +56,7 @@ fun HomeScreen(
 fun HomeContent(
     modifier: Modifier = Modifier,
     navigateToProfile: () -> Unit,
+    navigateToMapNearby: () -> Unit,
     navigateToDetail: (Int) -> Unit,
     navigateToViewAllPet: () -> Unit,
     navigateToPostPet: () -> Unit,
@@ -93,7 +96,7 @@ fun HomeContent(
                             HomeSearchBar()
                         }
                     }
-                    HomeExploreMenu()
+                    HomeExploreMenu(navigateToMapNearby = navigateToMapNearby)
                 }
                 SectionHeader(
                     label = stringResource(R.string.pets_for_adoption),
@@ -134,6 +137,7 @@ fun HomeContentPreview() {
     OPetTheme {
         HomeContent(
             navigateToProfile = {},
+            navigateToMapNearby = {},
             navigateToDetail = {},
             navigateToViewAllPet = {},
             navigateToPostPet = {},

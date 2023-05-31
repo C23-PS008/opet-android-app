@@ -72,6 +72,7 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         composable(HomeDestination.route) {
             HomeScreen(
                 navigateToProfile = { navController.navigate(ProfileDestination.route) },
+                navigateToMapNearby = { navController.navigate(MapNearbyPetDestination.route) },
                 navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
                 navigateToViewAllPet = { navController.navigate(AllPetDestination.route) },
                 navigateToMyPost = { navController.navigate(MyPostDestination.route) },
@@ -124,7 +125,7 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             ConfirmImageScreen(onNavigateUp = { navController.navigateUp() })
         }
         composable(MapNearbyPetDestination.route) {
-            MapNearbyPetScreen()
+            MapNearbyPetScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }
