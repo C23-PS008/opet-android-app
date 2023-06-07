@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.c23ps008.opet.R
@@ -90,9 +91,9 @@ fun LoginContent(
 
 @Composable
 fun LoginInputForm(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-        EmailTextField(label = "Email")
-        PasswordTextField(label = "Password")
+    Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        EmailTextField(label = "Email", value = "", onValueChange = {}, imeAction = ImeAction.Next)
+        PasswordTextField(label = "Password", value = "", onValueChange = {}, imeAction = ImeAction.Done)
     }
 }
 

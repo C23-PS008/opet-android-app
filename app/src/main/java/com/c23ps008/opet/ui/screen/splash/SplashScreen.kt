@@ -4,18 +4,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.c23ps008.opet.R
 import com.c23ps008.opet.ui.navigation.NavigationDestination
+import com.c23ps008.opet.ui.screen.AppViewModelProvider
 import com.c23ps008.opet.ui.theme.OPetTheme
 import kotlinx.coroutines.delay
 
@@ -25,21 +30,26 @@ object SplashDestination : NavigationDestination {
 
 @Composable
 fun SplashScreen(
-    modifier: Modifier = Modifier,
     navigateToHome: () -> Unit,
     navigateToGetStarted: () -> Unit,
+    viewModel: SplashViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val isAuth = false
-
-    LaunchedEffect(key1 = true) {
-        delay(2500L)
-        if (isAuth) {
-            navigateToHome()
-        } else {
-            navigateToGetStarted()
+    LaunchedEffect(Unit) {
+        delay(1000)
+        viewModel.checkToken().collect {token ->
+            if(token != null) {
+                navigateToHome()
+            } else {
+                navigateToGetStarted()
+            }
         }
     }
 
+    SplashScreenContent()
+}
+
+@Composable
+fun SplashScreenContent(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -53,6 +63,7 @@ fun SplashScreen(
                 id = R.string.app_name
             )
         )
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 36.dp), color = Color.White)
     }
 }
 
@@ -60,6 +71,6 @@ fun SplashScreen(
 @Composable
 fun SplashScreenPreview() {
     OPetTheme {
-        SplashScreen(navigateToHome = {}, navigateToGetStarted = {})
+        SplashScreenContent()
     }
 }

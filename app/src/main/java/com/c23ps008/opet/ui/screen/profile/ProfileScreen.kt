@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.c23ps008.opet.R
@@ -46,9 +47,9 @@ fun ProfileContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
             .padding(top = 30.dp)
             .verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(40.dp)) {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                NameTextField(label = stringResource(R.string.name))
-                PhoneTextField(label = stringResource(R.string.phone_number))
-                EmailTextField(label = stringResource(R.string.email))
+                NameTextField(label = stringResource(R.string.name), value = "", onValueChange = {}, imeAction = ImeAction.Done)
+                PhoneTextField(label = stringResource(R.string.phone_number), value = "", onValueChange = {}, imeAction = ImeAction.Done)
+                EmailTextField(label = stringResource(R.string.email), value = "", onValueChange = {}, imeAction = ImeAction.Done)
             }
             Button(modifier = Modifier.fillMaxWidth(), onClick = {}) {
                 Text(text = stringResource(R.string.save))
