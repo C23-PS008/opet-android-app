@@ -6,8 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
+import com.c23ps008.opet.ui.screen.login.LoginViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
+import com.c23ps008.opet.ui.screen.profile.ProfileViewModel
 import com.c23ps008.opet.ui.screen.register.RegisterViewModel
 import com.c23ps008.opet.ui.screen.splash.SplashViewModel
 
@@ -18,6 +20,15 @@ object AppViewModelProvider {
         }
         initializer {
             RegisterViewModel(opetApplication().container.authRepository)
+        }
+        initializer {
+            LoginViewModel(
+                opetApplication().container.authRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            ProfileViewModel(opetApplication().container.localDataStoreRepository)
         }
         initializer {
             PermissionsViewModel()

@@ -15,7 +15,7 @@ class LocalDataStore(private val context: Context) {
 
     suspend fun saveToken(token: String) {
         context.dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN]
+            preferences[ACCESS_TOKEN] = token
         }
     }
 

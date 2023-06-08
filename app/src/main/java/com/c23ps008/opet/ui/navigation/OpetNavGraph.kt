@@ -79,7 +79,17 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 navigateToPostPet = { navController.navigate(PostCameraDestination.route) })
         }
         composable(ProfileDestination.route) {
-            ProfileScreen(onNavigateUp = { navController.navigateUp() })
+            ProfileScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToGetStarted = {
+                    navController.popBackStack(HomeDestination.route, inclusive = true)
+                    navController.popBackStack(MyPostDestination.route, inclusive = true)
+                    navController.navigate(GetStartedDestination.route) {
+                        popUpTo(HomeDestination.route) {
+                            inclusive = true
+                        }
+                    }
+                })
         }
         composable(PostPetDestination.route) {
             PostPetScreen()

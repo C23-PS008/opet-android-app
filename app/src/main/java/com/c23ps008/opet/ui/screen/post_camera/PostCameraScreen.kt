@@ -190,7 +190,10 @@ private fun TakeCameraLayout(
             .fillMaxSize()
             .background(Color.Black),
     ) {
-        Box(modifier = Modifier.align(Alignment.Center)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
             content()
         }
         CenterAlignedTopAppBar(
@@ -224,7 +227,11 @@ private fun TakeCameraLayout(
             )
         }
         Image(
-            modifier = Modifier.fillMaxWidth().aspectRatio(1f).padding(16.dp).align(Alignment.Center),
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .padding(16.dp)
+                .align(Alignment.Center),
             painter = painterResource(id = R.drawable.__1_ratio_helper),
             contentDescription = null
         )
@@ -239,34 +246,27 @@ private fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapt
     val cameraProvideFuture = remember {
         ProcessCameraProvider.getInstance(context)
     }
-
-    Box(
-        modifier
-            .fillMaxSize()
-            .aspectRatio(1f)
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                val preview = PreviewView(ctx).apply {
-                    this.scaleType = PreviewView.ScaleType.FILL_CENTER
-                    layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-                    implementationMode = PreviewView.ImplementationMode.COMPATIBLE
-                }
-                val executor = ContextCompat.getMainExecutor(ctx)
-                cameraProvideFuture.addListener({
-                    val cameraProvider = cameraProvideFuture.get()
-                    bindPreview(
-                        lifecycleOwner,
-                        preview,
-                        imageCapture,
-                        cameraProvider,
-                    )
-                }, executor)
-                preview
-            },
-            modifier = modifier
-        )
-    }
+    AndroidView(
+        factory = { ctx ->
+            val preview = PreviewView(ctx).apply {
+                this.scaleType = PreviewView.ScaleType.FILL_CENTER
+                layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+            }
+            val executor = ContextCompat.getMainExecutor(ctx)
+            cameraProvideFuture.addListener({
+                val cameraProvider = cameraProvideFuture.get()
+                bindPreview(
+                    lifecycleOwner,
+                    preview,
+                    imageCapture,
+                    cameraProvider,
+                )
+            }, executor)
+            preview
+        },
+        modifier = modifier
+    )
 }
 
 private fun bindPreview(
