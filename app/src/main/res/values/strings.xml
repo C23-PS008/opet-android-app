@@ -43,4 +43,7 @@
     <string name="view_action">view action</string>
     <string name="take_image">take image</string>
     <string name="logout_menu">logout_menu</string>
+    <string name="please_wait">Please wait!</string>
+    <string name="checking_your_image">Checking your Image</string>
+    <string name="add_from_gallery">add from gallery</string>
 </resources>

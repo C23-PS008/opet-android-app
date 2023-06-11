@@ -1,5 +1,6 @@
 package com.c23ps008.opet.ui.screen.post_pet
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,15 +18,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.c23ps008.opet.R
 import com.c23ps008.opet.ui.components.OPetSegmentedButton
 import com.c23ps008.opet.ui.components.SegmentedItem
 
 @Composable
-fun CatPostEntry(modifier: Modifier = Modifier) {
+fun CatPostEntry(modifier: Modifier = Modifier, defaultPetBreed: String, imageUri: String) {
     val genderItems =
         listOf(
             SegmentedItem(label = "Unknown", value = "Unknown"),
@@ -38,6 +39,7 @@ fun CatPostEntry(modifier: Modifier = Modifier) {
             SegmentedItem(label = "Young", value = "Young"),
             SegmentedItem(label = "Adult", value = "Adult"),
         )
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -48,7 +50,7 @@ fun CatPostEntry(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f),
-                painter = painterResource(id = R.drawable.kucing),
+                painter = rememberAsyncImagePainter(model = Uri.parse(imageUri)),
                 contentDescription = "null",
                 contentScale = ContentScale.Crop
             )

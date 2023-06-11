@@ -9,6 +9,7 @@ import com.c23ps008.opet.OPetApplication
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
+import com.c23ps008.opet.ui.screen.post_pet.PostPetViewModel
 import com.c23ps008.opet.ui.screen.profile.ProfileViewModel
 import com.c23ps008.opet.ui.screen.register.RegisterViewModel
 import com.c23ps008.opet.ui.screen.splash.SplashViewModel
@@ -35,6 +36,9 @@ object AppViewModelProvider {
         }
         initializer {
             ConfirmImageViewModel(this.createSavedStateHandle())
+        }
+        initializer {
+            PostPetViewModel(this.createSavedStateHandle())
         }
     }
 }

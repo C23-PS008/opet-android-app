@@ -25,7 +25,7 @@ import com.c23ps008.opet.ui.components.OPetSegmentedButton
 import com.c23ps008.opet.ui.components.SegmentedItem
 
 @Composable
-fun DogPostEntry(modifier: Modifier = Modifier) {
+fun DogPostEntry(modifier: Modifier = Modifier, defaultPetBreed: String, imageUri: String) {
     val genderItems =
         listOf(
             SegmentedItem(label = "Unknown", value = "Unknown"),

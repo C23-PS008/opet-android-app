@@ -47,13 +47,14 @@ fun ConfirmImageScreen(
     modifier: Modifier = Modifier,
     viewModel: ConfirmImageViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
+    navigateToProcessingImage: (String) -> Unit
 ) {
-    ConfirmImageLayout(modifier = modifier, imgUri = viewModel.imageUri, onNavigateUp = onNavigateUp)
+    ConfirmImageLayout(modifier = modifier, imgUri = viewModel.imageUri, onNavigateUp = onNavigateUp, navigateToProcessingImage = navigateToProcessingImage)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConfirmImageLayout(modifier: Modifier = Modifier, imgUri: String, onNavigateUp: () -> Unit) {
+fun ConfirmImageLayout(modifier: Modifier = Modifier, imgUri: String, onNavigateUp: () -> Unit, navigateToProcessingImage: (String) -> Unit) {
     Log.d("TEST", "imgUri: $imgUri")
     Box(
         modifier = modifier
@@ -99,7 +100,7 @@ fun ConfirmImageLayout(modifier: Modifier = Modifier, imgUri: String, onNavigate
             FilledTonalButton(onClick = onNavigateUp, modifier = Modifier.weight(1f)) {
                 Text(text = "Cancel")
             }
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(1f)) {
+            Button(onClick = { navigateToProcessingImage(imgUri) }, modifier = Modifier.weight(1f)) {
                 Text(text = "Continue")
             }
         }
@@ -109,5 +110,5 @@ fun ConfirmImageLayout(modifier: Modifier = Modifier, imgUri: String, onNavigate
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ConfirmImageLayoutPreview() {
-    ConfirmImageLayout(imgUri = "null", onNavigateUp = {})
+    ConfirmImageLayout(imgUri = "null", onNavigateUp = {}, navigateToProcessingImage = {})
 }

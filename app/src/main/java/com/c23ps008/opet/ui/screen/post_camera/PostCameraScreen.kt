@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.CameraEnhance
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -137,6 +138,7 @@ fun PostCameraScreen(
     val onCaptureImage: () -> Unit = {
         val timestamp = System.currentTimeMillis()
         val imageFileName = "OPet_IMG_$timestamp.jpg"
+
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, imageFileName)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -150,6 +152,7 @@ fun PostCameraScreen(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
             contentValues
         ).build()
+
         imageCapture.takePicture(
             imageCaptureOptions, ContextCompat.getMainExecutor(context),
             object : ImageCapture.OnImageSavedCallback {
@@ -172,7 +175,29 @@ fun PostCameraScreen(
         )
     }
 
-    TakeCameraLayout(onNavigateUp = onNavigateUp, onCaptureImage = onCaptureImage) {
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if(result.resultCode == Activity.RESULT_OK) {
+                val selectedImgUri = result.data?.data
+                Log.d("TESTS", "selectedImg: $selectedImgUri")
+                onCaptureSuccess(selectedImgUri.toString())
+            }
+        })
+
+    val pickImageFromGallery = {
+        val intent = Intent()
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.type = "image/*"
+        val chooser = Intent.createChooser(intent, "Choose an image")
+        galleryLauncher.launch(chooser)
+    }
+
+    TakeCameraLayout(
+        onNavigateUp = onNavigateUp,
+        onCaptureImage = onCaptureImage,
+        pickImageFromGallery = pickImageFromGallery
+    ) {
         CameraPreview(imageCapture = imageCapture)
     }
 }
@@ -182,6 +207,7 @@ fun PostCameraScreen(
 private fun TakeCameraLayout(
     modifier: Modifier = Modifier,
     onCaptureImage: () -> Unit,
+    pickImageFromGallery: () -> Unit,
     onNavigateUp: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -212,7 +238,18 @@ private fun TakeCameraLayout(
                         contentDescription = stringResource(id = R.string.menu_back)
                     )
                 }
-            })
+            },
+            actions = {
+                FilledTonalIconButton(onClick = { pickImageFromGallery() }) {
+                    Icon(
+                        imageVector = Icons.Default.AddPhotoAlternate,
+                        contentDescription = stringResource(
+                            R.string.add_from_gallery
+                        )
+                    )
+                }
+            }
+        )
         FilledIconButton(
             onClick = onCaptureImage, modifier = Modifier
                 .size(92.dp)
@@ -247,6 +284,9 @@ private fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapt
         ProcessCameraProvider.getInstance(context)
     }
     AndroidView(
+        modifier = Modifier
+            .fillMaxSize()
+            .aspectRatio(1f),
         factory = { ctx ->
             val preview = PreviewView(ctx).apply {
                 this.scaleType = PreviewView.ScaleType.FILL_CENTER
@@ -265,7 +305,6 @@ private fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapt
             }, executor)
             preview
         },
-        modifier = modifier
     )
 }
 
@@ -299,7 +338,8 @@ fun TakeCameraPreview() {
         TakeCameraLayout(
             onNavigateUp = {},
             content = {},
-            onCaptureImage = {}
+            onCaptureImage = {},
+            pickImageFromGallery = {}
         )
     }
 }

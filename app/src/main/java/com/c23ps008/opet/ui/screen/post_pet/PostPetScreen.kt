@@ -13,35 +13,62 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.c23ps008.opet.R
 import com.c23ps008.opet.ui.navigation.NavigationDestination
+import com.c23ps008.opet.ui.screen.AppViewModelProvider
 import com.c23ps008.opet.ui.theme.OPetTheme
 
 object PostPetDestination : NavigationDestination {
     override val route: String = "post-pet"
+    const val petTypeArg = "petType"
+    const val petBreedArg = "petBreed"
+    const val imageUriArg = "imageUri"
+    val routeWithArgs = "$route/{$petTypeArg}/{$petBreedArg}/{$imageUriArg}"
 }
 
 @Composable
-fun PostPetScreen() {
-    PostPetContent()
+fun PostPetScreen(viewModel: PostPetViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+    val petTypeState: PetTypeState = when (viewModel.petType) {
+        "cat" -> PetTypeState.Cat
+        "dog" -> PetTypeState.Dog
+        else -> PetTypeState.Unknown
+    }
+    PostPetContent(
+        petTypeState = petTypeState,
+        defaultPetBreed = viewModel.petBreed,
+        imageUri = viewModel.imageUri
+    )
 }
 
 @Composable
-fun PostPetContent(modifier: Modifier = Modifier) {
-    val petType: PetTypeState = PetTypeState.Dog
+fun PostPetContent(
+    modifier: Modifier = Modifier,
+    petTypeState: PetTypeState,
+    defaultPetBreed: String,
+    imageUri: String
+) {
+    
     Scaffold(bottomBar = { BottomAction() }) { paddingValues ->
-        when(petType) {
+        when (petTypeState) {
             is PetTypeState.Cat -> {
                 CatPostEntry(
                     modifier
-                        .padding(paddingValues)
+                        .padding(paddingValues),
+                    defaultPetBreed = defaultPetBreed,
+                    imageUri = imageUri
                 )
             }
+
             is PetTypeState.Dog -> {
                 DogPostEntry(
-                    modifier.padding(paddingValues)
+                    modifier.padding(paddingValues),
+                    defaultPetBreed = defaultPetBreed,
+                    imageUri = imageUri
                 )
             }
+
+            else -> {}
         }
     }
 }
@@ -64,10 +91,10 @@ fun BottomAction(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = false)
+@Preview
 @Composable
-fun PostPetScreenPreview() {
+fun PostPetContentPreview() {
     OPetTheme {
-        PostPetContent()
+        PostPetContent(petTypeState = PetTypeState.Cat, defaultPetBreed = "", imageUri = "")
     }
 }
