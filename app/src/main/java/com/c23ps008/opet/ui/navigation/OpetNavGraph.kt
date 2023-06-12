@@ -117,7 +117,7 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         composable(
             route = PetDetailDestination.routeWithArgs,
             arguments = listOf(navArgument(PetDetailDestination.petIdArg) {
-                type = NavType.IntType
+                type = NavType.StringType
             })
         ) {
             PetDetailScreen(onNavigateUp = { navController.navigateUp() })
