@@ -1,18 +1,32 @@
 package com.c23ps008.opet.utils
 
 import android.content.Context
+import android.content.IntentSender
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Geocoder
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
+import androidx.activity.result.IntentSenderRequest
 import com.c23ps008.opet.ml.PetImageAnalysis
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
 import com.google.gson.Gson
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import retrofit2.HttpException
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.lang.Integer.min
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.Locale
 
 
 data class ErrorResponse(
@@ -63,6 +77,46 @@ val classLabels = listOf(
 fun createErrorResponse(e: HttpException): ErrorResponse {
     val errorJSONString = e.response()?.errorBody()?.string()
     return Gson().fromJson(errorJSONString, ErrorResponse::class.java)
+}
+
+@Suppress("DEPRECATION")
+fun getAddressName(context: Context, lat: Double, lon: Double): String {
+    val geocoder = Geocoder(context, Locale.getDefault())
+    try {
+        val list = geocoder.getFromLocation(lat, lon, 1)
+        if (list != null && list.size != 0) {
+            return list[0].getAddressLine(0)
+        }
+    } catch (e: Exception) {
+        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+    }
+    return "s"
+}
+
+fun checkLocationSetting(
+    context: Context,
+    onDisabled: (IntentSenderRequest) -> Unit,
+    onEnabled: () -> Unit,
+) {
+    val locationRequest =
+        LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
+    val client: SettingsClient = LocationServices.getSettingsClient(context)
+    val builder: LocationSettingsRequest.Builder =
+        LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+    val gpsSettingTask =
+        client.checkLocationSettings(builder.build())
+    gpsSettingTask.addOnSuccessListener {
+        onEnabled() }
+    gpsSettingTask.addOnFailureListener { exception ->
+        if (exception is ResolvableApiException) {
+            try {
+                val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                onDisabled(intentSenderRequest)
+            } catch (sendEx: IntentSender.SendIntentException) {
+                Toast.makeText(context, "Error: ${sendEx.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
 
 fun cropOneToOneRatio(context: Context, uri: Uri): Bitmap? {

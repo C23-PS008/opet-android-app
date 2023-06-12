@@ -277,7 +277,7 @@ private fun TakeCameraLayout(
 }
 
 @Composable
-private fun CameraPreview(modifier: Modifier = Modifier, imageCapture: ImageCapture?) {
+private fun CameraPreview(imageCapture: ImageCapture?) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val cameraProvideFuture = remember {

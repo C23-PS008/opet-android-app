@@ -45,7 +45,7 @@ object ProcessingImageDestination : NavigationDestination {
 @Composable
 fun ProcessingImageScreen(
     viewModel: ConfirmImageViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToPostPet: (petType: String, petBreed: String, imgUri: String) -> Unit,
+    navigateToPostPet: (imgUri: String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -61,7 +61,8 @@ fun ProcessingImageScreen(
             isProcessing = false
             delay(2000)
             if (resultLabel != null) {
-                navigateToPostPet(petType, resultLabel.toString(), viewModel.imageUri)
+                // TODO
+                // navigateToPostPet(petType, resultLabel.toString(), viewModel.imageUri)
             }
         }
     }

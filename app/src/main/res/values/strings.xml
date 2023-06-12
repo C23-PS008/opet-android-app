@@ -46,4 +46,8 @@
     <string name="please_wait">Please wait!</string>
     <string name="checking_your_image">Checking your Image</string>
     <string name="add_from_gallery">add from gallery</string>
+    <string name="select_pet_type">Select Pet Type</string>
+    <string name="pet_name">%s Name</string>
+    <string name="pet">Pet</string>
+    <string name="select_pet_breed">Select %s Breed</string>
 </resources>

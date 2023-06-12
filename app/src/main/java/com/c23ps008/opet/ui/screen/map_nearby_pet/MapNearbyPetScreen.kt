@@ -4,16 +4,12 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.content.Intent
-import android.content.IntentSender
 import android.location.Location
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -65,12 +61,8 @@ import com.c23ps008.opet.ui.screen.permissions_dialog.LocationPermissionTextProv
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsDialogScreen
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.theme.OPetTheme
-import com.google.android.gms.common.api.ResolvableApiException
-import com.google.android.gms.location.LocationRequest
+import com.c23ps008.opet.utils.checkLocationSetting
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
-import com.google.android.gms.location.Priority
-import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -317,31 +309,6 @@ fun DetailBottomSheet(
         }
     ) {
         content()
-    }
-}
-
-private fun checkLocationSetting(
-    context: Context,
-    onDisabled: (IntentSenderRequest) -> Unit,
-    onEnabled: () -> Unit,
-) {
-    val locationRequest =
-        LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
-    val client: SettingsClient = LocationServices.getSettingsClient(context)
-    val builder: LocationSettingsRequest.Builder =
-        LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
-    val gpsSettingTask =
-        client.checkLocationSettings(builder.build())
-    gpsSettingTask.addOnSuccessListener { onEnabled() }
-    gpsSettingTask.addOnFailureListener { exception ->
-        if (exception is ResolvableApiException) {
-            try {
-                val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
-                onDisabled(intentSenderRequest)
-            } catch (sendEx: IntentSender.SendIntentException) {
-                Toast.makeText(context, "Error: ${sendEx.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 }
 

@@ -26,7 +26,6 @@ import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageScreen
 import com.c23ps008.opet.ui.screen.post_camera.PostCameraDestination
 import com.c23ps008.opet.ui.screen.post_camera.PostCameraScreen
 import com.c23ps008.opet.ui.screen.post_camera.ProcessingImageDestination
-import com.c23ps008.opet.ui.screen.post_camera.ProcessingImageScreen
 import com.c23ps008.opet.ui.screen.post_pet.PostPetDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetScreen
 import com.c23ps008.opet.ui.screen.profile.ProfileDestination
@@ -95,11 +94,7 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         }
         composable(
             route = PostPetDestination.routeWithArgs,
-            arguments = listOf(navArgument(PostPetDestination.petTypeArg) {
-                type = NavType.StringType
-            }, navArgument(PostPetDestination.petBreedArg) {
-                type = NavType.StringType
-            }, navArgument(PostPetDestination.imageUriArg) {
+            arguments = listOf(navArgument(PostPetDestination.imageUriArg) {
                 type = NavType.StringType
             })
         ) {
@@ -128,7 +123,7 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         composable(PostCameraDestination.route) {
             PostCameraScreen(onCaptureSuccess = {
                 navController.navigate(
-                    "${ConfirmImageDestination.route}/${
+                    "${PostPetDestination.route}/${
                         URLEncoder.encode(
                             it,
                             "UTF-8"
@@ -162,20 +157,20 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 type = NavType.StringType
             })
         ) {
-            ProcessingImageScreen(navigateToPostPet = { petType, petBreed, imageUri ->
-                navController.navigate(
-                    "${PostPetDestination.route}/$petType/$petBreed/${
-                        URLEncoder.encode(
-                            imageUri,
-                            "UTF-8"
-                        )
-                    }"
-                ) {
-                    popUpTo(PostCameraDestination.route) {
-                        inclusive = true
-                    }
-                }
-            })
+            // ProcessingImageScreen(navigateToPostPet = { petType, petBreed, imageUri ->
+            //     navController.navigate(
+            //         "${PostPetDestination.route}/$petType/$petBreed/${
+            //             URLEncoder.encode(
+            //                 imageUri,
+            //                 "UTF-8"
+            //             )
+            //         }"
+            //     ) {
+            //         popUpTo(PostCameraDestination.route) {
+            //             inclusive = true
+            //         }
+            //     }
+            // })
         }
         composable(MapNearbyPetDestination.route) {
             MapNearbyPetScreen(onNavigateUp = { navController.navigateUp() })
