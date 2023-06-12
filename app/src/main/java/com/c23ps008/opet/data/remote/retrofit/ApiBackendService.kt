@@ -4,7 +4,9 @@ import com.c23ps008.opet.data.formdata.LoginFormData
 import com.c23ps008.opet.data.formdata.ProfileFormData
 import com.c23ps008.opet.data.formdata.RegisterFormData
 import com.c23ps008.opet.data.formdata.UploadPetResponse
+import com.c23ps008.opet.data.remote.response.DeleteMyPetsResponse
 import com.c23ps008.opet.data.remote.response.LoginResponse
+import com.c23ps008.opet.data.remote.response.MyPetsResponse
 import com.c23ps008.opet.data.remote.response.RegisterResponse
 import com.c23ps008.opet.data.remote.response.UpdateProfileResponse
 import com.c23ps008.opet.data.remote.response.UserMeResponse
@@ -44,4 +46,10 @@ interface ApiBackendService {
         @Part("lat") lat: RequestBody,
         @Part image: MultipartBody.Part,
     ): UploadPetResponse
+
+    @GET("mypets")
+    suspend fun getMyPets(@Header("Authorization") authorization: String): MyPetsResponse
+
+    @DELETE("mypets/{petId}")
+    suspend fun deleteMyPet(@Header("Authorization") authorization: String, @Path("petId") petId: String): DeleteMyPetsResponse
 }

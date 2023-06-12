@@ -52,4 +52,6 @@
     <string name="select_pet_breed">Select %s Breed</string>
     <string name="go_to_my_posts">Go to My Posts</string>
     <string name="success">success</string>
+    <string name="do_you_want_to_delete_this_post">Do you want to delete this post?</string>
+    <string name="please_tell_us_the_reason">Please tell us the reason</string>
 </resources>

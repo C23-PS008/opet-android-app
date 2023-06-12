@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
+import com.c23ps008.opet.ui.screen.my_post.MyPostViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
 import com.c23ps008.opet.ui.screen.post_pet.PostPetViewModel
@@ -44,6 +45,12 @@ object AppViewModelProvider {
             PostPetViewModel(
                 this.createSavedStateHandle(),
                 opetApplication().container.postPetRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            MyPostViewModel(
+                opetApplication().container.myPetsRepository,
                 opetApplication().container.localDataStoreRepository
             )
         }

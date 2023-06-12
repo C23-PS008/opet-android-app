@@ -9,7 +9,6 @@ import com.c23ps008.opet.utils.createErrorResponse
 import retrofit2.HttpException
 
 class RegisterViewModel(private val authRepository: AuthRepository) : ViewModel() {
-
     suspend fun register(registerFormData: RegisterFormData): UiState<RegisterResponse> = try {
         val response = authRepository.register(registerFormData)
         UiState.Success(response)
