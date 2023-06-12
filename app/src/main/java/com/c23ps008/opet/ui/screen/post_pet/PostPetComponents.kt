@@ -1,12 +1,17 @@
 package com.c23ps008.opet.ui.screen.post_pet
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -15,7 +20,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.c23ps008.opet.R
 
 @Composable
@@ -87,20 +95,26 @@ fun SelectInputPetType(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             })
-
-        DropdownMenu(
-            expanded = isExpanded,
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .exposedDropdownSize(),
-            onDismissRequest = { isExpanded = false }) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(text = option) },
-                    onClick = {
-                        onValueChange(option)
-                        isExpanded = false
-                    })
+        if (isExpanded) {
+            Dialog(onDismissRequest = { isExpanded = false }) {
+                Surface(
+                    shadowElevation = 4.dp,
+                    tonalElevation = 4.dp,
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        itemsIndexed(options) { index, option ->
+                            DropdownMenuItem(text = { Text(text = option) }, onClick = {
+                                onValueChange(option)
+                                isExpanded = false
+                            })
+                            if (index < options.lastIndex) {
+                                Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -122,6 +136,11 @@ fun SelectInputPetBreed(
     onValueChange: (String) -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    val filteredOptions = options.filter {
+        it.contains(searchQuery, ignoreCase = true)
+    }
+
 
     ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = { isExpanded = it }) {
         OutlinedTextField(
@@ -137,18 +156,37 @@ fun SelectInputPetBreed(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
             })
 
-        DropdownMenu(
-            expanded = isExpanded,
-            onDismissRequest = { isExpanded = false },
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .exposedDropdownSize()
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(text = { Text(text = option) }, onClick = {
-                    onValueChange(option)
-                    isExpanded = false
-                })
+        if (isExpanded) {
+            Dialog(onDismissRequest = { isExpanded = false }) {
+                Surface(
+                    modifier = Modifier.sizeIn(maxHeight = 640.dp),
+                    shadowElevation = 4.dp,
+                    tonalElevation = 4.dp,
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Column() {
+                        TextField(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text(text = stringResource(R.string.search_breed)) }
+                        )
+                        Spacer(modifier = Modifier.padding(bottom = 8.dp))
+                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                            itemsIndexed(filteredOptions) { index, option ->
+                                DropdownMenuItem(text = { Text(text = option) }, onClick = {
+                                    onValueChange(option)
+                                    isExpanded = false
+                                })
+                                if (index < filteredOptions.lastIndex) {
+                                    Divider(modifier = Modifier.padding(horizontal = 16.dp))
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -182,7 +220,11 @@ fun InputPetAbout(modifier: Modifier = Modifier, value: String, onValueChange: (
 }
 
 @Composable
-fun InputContactName(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun InputContactName(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
@@ -193,7 +235,11 @@ fun InputContactName(modifier: Modifier = Modifier, value: String, onValueChange
 }
 
 @Composable
-fun InputPhoneNumber(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun InputPhoneNumber(
+    modifier: Modifier = Modifier,
+    value: String,
+    onValueChange: (String) -> Unit,
+) {
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
@@ -206,7 +252,9 @@ fun InputPhoneNumber(modifier: Modifier = Modifier, value: String, onValueChange
 @Composable
 fun InputLocation(modifier: Modifier = Modifier, onClick: () -> Unit, value: String) {
     OutlinedTextField(
-        modifier = modifier.fillMaxWidth().clickable { onClick() },
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
         value = value,
         placeholder = { Text(text = "Location *") },
         onValueChange = {},
