@@ -69,6 +69,7 @@ fun InputPetName(
 @Composable
 fun SelectInputPetType(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     petType: String,
     onValueChange: (String) -> Unit,
 ) {
@@ -77,8 +78,9 @@ fun SelectInputPetType(
     ExposedDropdownMenuBox(
         modifier = modifier.fillMaxWidth(),
         expanded = isExpanded,
-        onExpandedChange = { isExpanded = it }) {
+        onExpandedChange = { isExpanded = if(!enabled) false else it }) {
         OutlinedTextField(
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
@@ -165,7 +167,7 @@ fun SelectInputPetBreed(
                     color = MaterialTheme.colorScheme.background,
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    Column() {
+                    Column {
                         TextField(
                             modifier = Modifier
                                 .fillMaxWidth(),
@@ -216,36 +218,6 @@ fun InputPetAbout(modifier: Modifier = Modifier, value: String, onValueChange: (
             )
         },
         minLines = 3
-    )
-}
-
-@Composable
-fun InputContactName(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-) {
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = value,
-        label = { Text(text = stringResource(R.string.contact_name_required)) },
-        onValueChange = onValueChange,
-        maxLines = 1
-    )
-}
-
-@Composable
-fun InputPhoneNumber(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-) {
-    OutlinedTextField(
-        modifier = modifier.fillMaxWidth(),
-        value = value,
-        label = { Text(text = "Phone Number *") },
-        onValueChange = onValueChange,
-        maxLines = 1
     )
 }
 

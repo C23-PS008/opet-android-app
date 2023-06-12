@@ -9,11 +9,13 @@ import com.c23ps008.opet.OPetApplication
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
 import com.c23ps008.opet.ui.screen.my_post.MyPostViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
+import com.c23ps008.opet.ui.screen.pet_detail.PetDetailViewModel
 import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
 import com.c23ps008.opet.ui.screen.post_pet.PostPetViewModel
 import com.c23ps008.opet.ui.screen.profile.ProfileViewModel
 import com.c23ps008.opet.ui.screen.register.RegisterViewModel
 import com.c23ps008.opet.ui.screen.splash.SplashViewModel
+import com.c23ps008.opet.ui.screen.update_pet.UpdatePetViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -51,6 +53,20 @@ object AppViewModelProvider {
         initializer {
             MyPostViewModel(
                 opetApplication().container.myPetsRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            PetDetailViewModel(
+                this.createSavedStateHandle(),
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            UpdatePetViewModel(
+                this.createSavedStateHandle(),
+                opetApplication().container.petRepository,
                 opetApplication().container.localDataStoreRepository
             )
         }

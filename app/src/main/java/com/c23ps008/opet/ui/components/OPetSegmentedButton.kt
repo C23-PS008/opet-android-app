@@ -16,10 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -34,8 +30,8 @@ fun OPetSegmentedButton(
     modifier: Modifier = Modifier,
     items: List<SegmentedItem>,
     onOptionSelected: (Int) -> Unit,
+    selectedOption: Int,
 ) {
-    var selectedOption by remember { mutableStateOf(0) }
     Row(modifier = modifier.fillMaxWidth()) {
         repeat(items.size) { itemIndex ->
             val shape: Shape = when (itemIndex) {
@@ -53,7 +49,6 @@ fun OPetSegmentedButton(
             }
             OutlinedButton(
                 onClick = {
-                    selectedOption = itemIndex
                     onOptionSelected(itemIndex)
                 },
                 modifier = Modifier
@@ -94,7 +89,7 @@ fun OPetSegmentedButtonPreview() {
             SegmentedItem(Icons.Outlined.Male, "Male", "Male"),
             SegmentedItem(Icons.Outlined.Female, "Female", "Female")
         )
-    OPetSegmentedButton(items = segmentedItem, onOptionSelected = {})
+    OPetSegmentedButton(items = segmentedItem, onOptionSelected = {}, selectedOption = 0)
 }
 
 data class SegmentedItem(

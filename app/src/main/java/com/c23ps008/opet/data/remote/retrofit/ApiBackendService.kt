@@ -7,7 +7,9 @@ import com.c23ps008.opet.data.formdata.UploadPetResponse
 import com.c23ps008.opet.data.remote.response.DeleteMyPetsResponse
 import com.c23ps008.opet.data.remote.response.LoginResponse
 import com.c23ps008.opet.data.remote.response.MyPetsResponse
+import com.c23ps008.opet.data.remote.response.PetDetailResponse
 import com.c23ps008.opet.data.remote.response.RegisterResponse
+import com.c23ps008.opet.data.remote.response.UpdateMyPetResponse
 import com.c23ps008.opet.data.remote.response.UpdateProfileResponse
 import com.c23ps008.opet.data.remote.response.UserMeResponse
 import okhttp3.MultipartBody
@@ -51,5 +53,30 @@ interface ApiBackendService {
     suspend fun getMyPets(@Header("Authorization") authorization: String): MyPetsResponse
 
     @DELETE("mypets/{petId}")
-    suspend fun deleteMyPet(@Header("Authorization") authorization: String, @Path("petId") petId: String): DeleteMyPetsResponse
+    suspend fun deleteMyPet(
+        @Header("Authorization") authorization: String,
+        @Path("petId") petId: String,
+    ): DeleteMyPetsResponse
+
+    @Multipart
+    @PUT("mypets/{petId}")
+    suspend fun updateMyPet(
+        @Header("Authorization") authorization: String,
+        @Path("petId") petId: String,
+        @Part("name") name: RequestBody,
+        @Part("breed") breed: RequestBody,
+        @Part("characters") characters: RequestBody,
+        @Part("age") age: RequestBody,
+        @Part("size") size: RequestBody,
+        @Part("gender") gender: RequestBody,
+        @Part("about") about: RequestBody,
+        @Part("lon") lon: RequestBody,
+        @Part("lat") lat: RequestBody,
+    ): UpdateMyPetResponse
+
+    @GET("pets/{petId}")
+    suspend fun getPet(
+        @Header("Authorization") authorization: String,
+        @Path("petId") petId: String,
+    ): PetDetailResponse
 }

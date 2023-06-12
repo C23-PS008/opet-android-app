@@ -74,7 +74,10 @@ fun MyPostScreen(
     viewModel: MyPostViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
         factory = AppViewModelProvider.Factory
     ),
-    navigateToHome: () -> Unit, navigateToPostPet: () -> Unit, navigateToDetail: (String) -> Unit,
+    navigateToHome: () -> Unit,
+    navigateToPostPet: () -> Unit,
+    navigateToDetail: (String) -> Unit,
+    navigateToEdit: (String) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -104,6 +107,7 @@ fun MyPostScreen(
                         modifier = Modifier.padding(paddingValues),
                         navigateToDetail = navigateToDetail,
                         myPostsData = uiState.data,
+                        navigateToEdit = navigateToEdit,
                         onDeletePost = { petId ->
                             coroutineScope.launch {
                                 when (val result = viewModel.deletePost(petId)) {
@@ -133,6 +137,7 @@ fun MyPostContent(
     navigateToDetail: (String) -> Unit,
     myPostsData: List<MyPetsDataItem?>,
     onDeletePost: (String) -> Unit,
+    navigateToEdit: (String) -> Unit,
 ) {
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var selectedIdToDelete by remember { mutableStateOf("") }
@@ -213,7 +218,8 @@ fun MyPostContent(
                                 onDelete = {
                                     showDeleteConfirmDialog = true
                                     selectedIdToDelete = it?.petId.toString()
-                                }
+                                },
+                                navigateToEdit = { navigateToEdit(it?.petId.toString()) }
                             )
                         }
                     }
@@ -246,6 +252,7 @@ fun ActionDropDown(
     expanded: Boolean,
     onDismissRequest: () -> Unit,
     onDelete: () -> Unit,
+    navigateToEdit: () -> Unit,
 ) {
     DropdownMenu(
         modifier = modifier,
@@ -260,7 +267,7 @@ fun ActionDropDown(
                 )
             },
             text = { Text(text = "Edit") },
-            onClick = { /*TODO*/ })
+            onClick = { navigateToEdit() })
         DropdownMenuItem(
             leadingIcon = {
                 Icon(
@@ -345,6 +352,6 @@ fun DeleteConfirmDialogPreview() {
 @Composable
 fun MyPostContentPreview() {
     OPetTheme {
-        MyPostContent(navigateToDetail = {}, myPostsData = listOf(), onDeletePost = {})
+        MyPostContent(navigateToDetail = {}, myPostsData = listOf(), onDeletePost = {}, navigateToEdit = {})
     }
 }

@@ -36,6 +36,8 @@ import com.c23ps008.opet.ui.screen.register.RegisterDestination
 import com.c23ps008.opet.ui.screen.register.RegisterScreen
 import com.c23ps008.opet.ui.screen.splash.SplashDestination
 import com.c23ps008.opet.ui.screen.splash.SplashScreen
+import com.c23ps008.opet.ui.screen.update_pet.UpdatePetDestination
+import com.c23ps008.opet.ui.screen.update_pet.UpdatePetScreen
 import java.net.URLEncoder
 
 @Composable
@@ -131,8 +133,14 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             MyPostScreen(
                 navigateToHome = { navController.navigate(HomeDestination.route) },
                 navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
-                navigateToPostPet = { navController.navigate(PostCameraDestination.route) }
+                navigateToPostPet = { navController.navigate(PostCameraDestination.route) },
+                navigateToEdit = {navController.navigate("${UpdatePetDestination.route}/$it")}
             )
+        }
+        composable(route = UpdatePetDestination.routeWithArgs, arguments = listOf(navArgument(UpdatePetDestination.petIdArg) {
+            type = NavType.StringType
+        })) {
+            UpdatePetScreen()
         }
         composable(PostCameraDestination.route) {
             PostCameraScreen(onCaptureSuccess = {
