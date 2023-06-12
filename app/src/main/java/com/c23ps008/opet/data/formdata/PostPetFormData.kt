@@ -8,10 +8,10 @@ data class PostPetFormData(
     var breed: String = "",
     var characters: String = "Unknown",
     var age: String = "",
-    var size: String = "Unknown",
-    var gender: String = "",
+    var size: String = "Small",
+    var gender: String = "Unknown",
     var about: String = "",
     var lat: Double? = null,
     var lon: Double? = null,
-    var image: File,
+    var image: File? = null,
 )

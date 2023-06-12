@@ -29,7 +29,10 @@ object AppViewModelProvider {
             )
         }
         initializer {
-            ProfileViewModel(opetApplication().container.localDataStoreRepository)
+            ProfileViewModel(
+                opetApplication().container.localDataStoreRepository,
+                opetApplication().container.profileRepository
+            )
         }
         initializer {
             PermissionsViewModel()
@@ -38,7 +41,11 @@ object AppViewModelProvider {
             ConfirmImageViewModel(this.createSavedStateHandle())
         }
         initializer {
-            PostPetViewModel(this.createSavedStateHandle())
+            PostPetViewModel(
+                this.createSavedStateHandle(),
+                opetApplication().container.postPetRepository,
+                opetApplication().container.localDataStoreRepository
+            )
         }
     }
 }

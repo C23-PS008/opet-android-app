@@ -40,6 +40,7 @@ fun NameTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
+        singleLine = true,
         label = {
             Text(
                 text = label
@@ -63,6 +64,7 @@ fun PhoneTextField(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
+        singleLine = true,
         onValueChange = onValueChange,
         label = {
             Text(
@@ -87,6 +89,7 @@ fun EmailTextField(
     OutlinedTextField(
         modifier = modifier.fillMaxWidth(),
         value = value,
+        singleLine = true,
         onValueChange = onValueChange,
         label = {
             Text(

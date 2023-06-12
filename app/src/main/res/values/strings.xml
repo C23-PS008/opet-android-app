@@ -50,4 +50,6 @@
     <string name="pet_name">%s Name</string>
     <string name="pet">Pet</string>
     <string name="select_pet_breed">Select %s Breed</string>
+    <string name="go_to_my_posts">Go to My Posts</string>
+    <string name="success">success</string>
 </resources>

@@ -28,6 +28,8 @@ import com.c23ps008.opet.ui.screen.post_camera.PostCameraScreen
 import com.c23ps008.opet.ui.screen.post_camera.ProcessingImageDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetScreen
+import com.c23ps008.opet.ui.screen.post_pet.UploadPetSuccessDestination
+import com.c23ps008.opet.ui.screen.post_pet.UploadPetSuccessScreen
 import com.c23ps008.opet.ui.screen.profile.ProfileDestination
 import com.c23ps008.opet.ui.screen.profile.ProfileScreen
 import com.c23ps008.opet.ui.screen.register.RegisterDestination
@@ -98,7 +100,19 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 type = NavType.StringType
             })
         ) {
-            PostPetScreen()
+            PostPetScreen(navigateToUploadPetSuccess = {
+                navController.navigate(UploadPetSuccessDestination.route) {
+                    popUpTo(PostCameraDestination.route) {
+                        inclusive = true
+                    }
+                }
+            })
+        }
+        composable(UploadPetSuccessDestination.route) {
+            UploadPetSuccessScreen(navigateToMyPost = {
+                navController.popBackStack()
+                navController.navigate(MyPostDestination.route)
+            })
         }
         composable(
             route = PetDetailDestination.routeWithArgs,

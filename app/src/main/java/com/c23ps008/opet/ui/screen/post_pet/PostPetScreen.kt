@@ -7,6 +7,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -46,6 +48,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.c23ps008.opet.R
 import com.c23ps008.opet.data.PetBreedData
 import com.c23ps008.opet.data.formdata.PostPetFormData
+import com.c23ps008.opet.ui.common.UiState
+import com.c23ps008.opet.ui.components.LoadingDialog
 import com.c23ps008.opet.ui.components.OPetSegmentedButton
 import com.c23ps008.opet.ui.components.SegmentedItem
 import com.c23ps008.opet.ui.navigation.NavigationDestination
@@ -56,7 +60,9 @@ import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.theme.OPetTheme
 import com.c23ps008.opet.utils.checkLocationSetting
 import com.c23ps008.opet.utils.getAddressName
+import com.c23ps008.opet.utils.uriToFile
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.launch
 import java.io.File
 
 object PostPetDestination : NavigationDestination {
@@ -69,6 +75,7 @@ object PostPetDestination : NavigationDestination {
 fun PostPetScreen(
     viewModel: PostPetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     permissionsViewModel: PermissionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToUploadPetSuccess: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -80,6 +87,8 @@ fun PostPetScreen(
     var permissionGranted by remember {
         mutableStateOf(false)
     }
+
+    val coroutineScope = rememberCoroutineScope()
 
     val permissionDialogQueue = permissionsViewModel.visiblePermissionDialogQueue
 
@@ -128,9 +137,29 @@ fun PostPetScreen(
         )
     }
 
-    if(permissionGranted) {
+    if (permissionGranted) {
         PostPetContent(
-            imageUri = viewModel.imageUri
+            imageUri = viewModel.imageUri,
+            file = uriToFile(Uri.parse(viewModel.imageUri), context),
+            onPostClick = { postPetFormData, setLoading ->
+                coroutineScope.launch {
+                    setLoading(true)
+                    when (val result = viewModel.uploadPet(postPetFormData)) {
+                        is UiState.Error -> {
+                            setLoading(false)
+                            Log.d("Tests", result.message)
+                            Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                        UiState.Loading -> {}
+                        is UiState.Success -> {
+                            setLoading(false)
+                            Toast.makeText(context, result.data.message, Toast.LENGTH_SHORT).show()
+                            navigateToUploadPetSuccess()
+                        }
+                    }
+                }
+            }
         )
     }
 
@@ -140,9 +169,29 @@ fun PostPetScreen(
 fun PostPetContent(
     modifier: Modifier = Modifier,
     imageUri: String,
+    file: File?,
+    onPostClick: (PostPetFormData, (Boolean) -> Unit) -> Unit,
 ) {
-    var formData by remember { mutableStateOf(PostPetFormData(image = File(imageUri))) }
-    Scaffold(modifier = modifier, bottomBar = { BottomAction() }) { paddingValues ->
+    var formData by remember { mutableStateOf(PostPetFormData(image = file)) }
+    var isLoading by remember { mutableStateOf(false) }
+
+    fun isEnabled(): Boolean {
+        formData.apply {
+            return name.isNotEmpty() && petCategory != null && breed.isNotEmpty() && characters.isNotEmpty()
+                    && age.isNotEmpty() && size.isNotEmpty() && gender.isNotEmpty() && about.isNotEmpty()
+                    && lat != null && lon != null
+        }
+    }
+    if (isLoading) {
+        LoadingDialog(onDismiss = {})
+    }
+    Scaffold(modifier = modifier, bottomBar = {
+        BottomAction(isEnabled = isEnabled() && !isLoading, onSubmit = {
+            onPostClick(formData) { loading ->
+                isLoading = loading
+            }
+        })
+    }) { paddingValues ->
         PostPetEntry(
             modifier = Modifier.padding(paddingValues),
             imageUri = imageUri,
@@ -170,13 +219,13 @@ fun PostPetEntry(
         )
 
     val catAgeList = listOf(
-        SegmentedItem(label = "Kitten", value = "Kitten"),
+        SegmentedItem(label = "Kitten", value = "Baby"),
         SegmentedItem(label = "Young", value = "Young"),
         SegmentedItem(label = "Adult", value = "Adult"),
     )
 
     val dogAgeList = listOf(
-        SegmentedItem(label = "Puppy", value = "Puppy"),
+        SegmentedItem(label = "Puppy", value = "Baby"),
         SegmentedItem(label = "Young", value = "Young"),
         SegmentedItem(label = "Adult", value = "Adult"),
     )
@@ -201,14 +250,18 @@ fun PostPetEntry(
     }
 
     LaunchedEffect(formData.petCategory) {
-        formData.apply {
-            breed = ""
-        }
-        onFormDataChange(formData)
+        onFormDataChange(formData.copy(breed = ""))
         if (formData.petCategory != null) {
             when (petCategoryLabel[formData.petCategory as Int]) {
-                "Cat" -> petBreedsOptions = PetBreedData.getCatBreed()
-                "Dog" -> petBreedsOptions = PetBreedData.getDogBreed()
+                "Cat" -> {
+                    petBreedsOptions = PetBreedData.getCatBreed()
+                    onFormDataChange(formData.copy(age = catAgeList[ageIndex].value))
+                }
+
+                "Dog" -> {
+                    petBreedsOptions = PetBreedData.getDogBreed()
+                    onFormDataChange(formData.copy(age = dogAgeList[ageIndex].value))
+                }
             }
         }
     }
@@ -311,7 +364,11 @@ fun PostPetEntry(
                 Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     // InputContactName(value = contactName, onValueChange = { contactName = it })
                     // InputPhoneNumber(value = phoneNumber, onValueChange = { phoneNumber = it })
-                    InputLocation(value = if(formData.lat != null && formData.lon != null) getAddressName(context, formData.lat as Double, formData.lon as Double) else "",
+                    InputLocation(value = if (formData.lat != null && formData.lon != null) getAddressName(
+                        context,
+                        formData.lat as Double,
+                        formData.lon as Double
+                    ) else "",
                         onClick = {
                             checkLocationSetting(
                                 context,
@@ -340,7 +397,8 @@ fun PostPetEntry(
 }
 
 @Composable
-fun BottomAction(modifier: Modifier = Modifier) {
+fun BottomAction(modifier: Modifier = Modifier, onSubmit: () -> Unit, isEnabled: Boolean) {
+    Log.d("TESTS", "BottomAction: $isEnabled")
     Row(
         modifier
             .fillMaxWidth()
@@ -351,7 +409,7 @@ fun BottomAction(modifier: Modifier = Modifier) {
             .weight(1f), onClick = { /*TODO*/ }) {
             Text(text = stringResource(R.string.cancel))
         }
-        Button(modifier = Modifier.weight(1f), onClick = { /*TODO*/ }) {
+        Button(modifier = Modifier.weight(1f), onClick = onSubmit, enabled = isEnabled) {
             Text(text = stringResource(R.string.post))
         }
     }
@@ -361,6 +419,6 @@ fun BottomAction(modifier: Modifier = Modifier) {
 @Composable
 fun PostPetContentPreview() {
     OPetTheme {
-        PostPetContent(imageUri = "")
+        PostPetContent(imageUri = "", onPostClick = { _, _ -> }, file = null)
     }
 }

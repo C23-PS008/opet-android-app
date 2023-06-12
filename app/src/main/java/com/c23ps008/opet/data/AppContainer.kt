@@ -5,10 +5,14 @@ import com.c23ps008.opet.data.local.LocalDataStore
 import com.c23ps008.opet.data.remote.retrofit.ApiConfig
 import com.c23ps008.opet.data.repository.AuthRepository
 import com.c23ps008.opet.data.repository.LocalDataStoreRepository
+import com.c23ps008.opet.data.repository.PostPetRepository
+import com.c23ps008.opet.data.repository.ProfileRepository
 
 interface AppContainer {
     val authRepository: AuthRepository
     val localDataStoreRepository: LocalDataStoreRepository
+    val profileRepository: ProfileRepository
+    val postPetRepository: PostPetRepository
 }
 
 class AppDataContainer(private val context: Context, private val apiConfig: ApiConfig) :
@@ -19,5 +23,13 @@ class AppDataContainer(private val context: Context, private val apiConfig: ApiC
 
     override val localDataStoreRepository: LocalDataStoreRepository by lazy {
         LocalDataStoreRepository(LocalDataStore(context))
+    }
+
+    override val profileRepository: ProfileRepository by lazy {
+        ProfileRepository(apiConfig.getApiBackendService())
+    }
+
+    override val postPetRepository: PostPetRepository by lazy {
+        PostPetRepository(apiConfig.getApiBackendService())
     }
 }
