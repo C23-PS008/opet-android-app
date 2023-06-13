@@ -33,6 +33,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -348,10 +349,9 @@ fun DetailBottomSheet(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = petData.name.toString())
-                            Text(text = petData.breed.toString())
+                            Text(text = petData.name.toString(), style = MaterialTheme.typography.titleMedium)
+                            Text(text = petData.breed.toString(), style = MaterialTheme.typography.labelLarge)
                         }
-                        Text(text = "2 KM Near you")
                     }
                     FilledTonalButton(modifier = Modifier.fillMaxWidth(), onClick = { navigateToPetDetail(petData.petId.toString()) }) {
                         Text(text = "View Detail")
