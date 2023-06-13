@@ -28,7 +28,8 @@ object ApiConfig {
         } else {
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.NONE)
         }
-        val client = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()
+        val client = OkHttpClient.Builder().connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS).writeTimeout(60, TimeUnit.SECONDS).addInterceptor(loggingInterceptor).build()
         val apiUrl = BuildConfig.DOG_PREDICT_API_ENDPOINT_URL
         val retrofit =
             Retrofit.Builder().baseUrl(apiUrl)

@@ -134,14 +134,14 @@ fun FindMatchDogCalculatedContent(
 
                     is UiState.Success -> {
                         val result = dataState.data.predictions?.get(0)?.topBreeds
-                        if (result == null) {
+                        if (result.isNullOrEmpty()) {
                             ErrorContent(
                                 modifier = Modifier.align(Alignment.Center),
                                 message = stringResource(R.string.result_not_found),
                                 onNavigateUp = onNavigateUp
                             )
                         } else {
-                            Column() {
+                            Column {
                                 Spacer(modifier = Modifier.padding(bottom = 8.dp))
                                 LazyColumn(
                                     contentPadding = PaddingValues(16.dp),
@@ -149,7 +149,7 @@ fun FindMatchDogCalculatedContent(
                                 ) {
                                     items(result, key = { it?.breed.toString() }) {
                                         OutlinedCard {
-                                            Column() {
+                                            Column {
                                                 Image(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
@@ -386,17 +386,6 @@ fun FindMatchBottomBar(
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun FindMatchDogCalculatedContentPreview() {
-    OPetTheme {
-        FindMatchDogCalculatedContent(
-            onNavigateUp = { /*TODO*/ },
-            dataState = UiState.Error("Something Wrong")
-        )
     }
 }
 

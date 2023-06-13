@@ -6,6 +6,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ApiCatPredict {
-    @POST("predict")
+    @POST("recommend")
     suspend fun predict(@Body body: CatPredictFormData): CatPredictResponse
 }
