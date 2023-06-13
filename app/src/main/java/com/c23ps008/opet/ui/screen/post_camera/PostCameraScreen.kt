@@ -31,8 +31,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.outlined.AddPhotoAlternate
 import androidx.compose.material.icons.outlined.CameraEnhance
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -242,7 +242,7 @@ private fun TakeCameraLayout(
             actions = {
                 FilledTonalIconButton(onClick = { pickImageFromGallery() }) {
                     Icon(
-                        imageVector = Icons.Default.AddPhotoAlternate,
+                        imageVector = Icons.Outlined.AddPhotoAlternate,
                         contentDescription = stringResource(
                             R.string.add_from_gallery
                         )

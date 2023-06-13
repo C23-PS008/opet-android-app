@@ -46,12 +46,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
 import com.c23ps008.opet.R
 import com.c23ps008.opet.data.FakeDataSource
 import com.c23ps008.opet.data.PetData
@@ -284,7 +284,7 @@ fun DetailBottomSheet(
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop,
-                    painter = painterResource(id = petData.pet_image),
+                    painter = rememberAsyncImagePainter(model = petData.pet_image),
                     contentDescription = null
                 )
                 Column(

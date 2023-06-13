@@ -45,7 +45,7 @@ object AllPetDestination : NavigationDestination {
 fun AllPetScreen(
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit,
-    navigateToDetail: (Int) -> Unit,
+    navigateToDetail: (String) -> Unit,
 ) {
     AllPetScreenContent(modifier = modifier, onNavigateUp = onNavigateUp, navigateToDetail = navigateToDetail)
 }
@@ -54,7 +54,7 @@ fun AllPetScreen(
 fun AllPetScreenContent(
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit,
-    navigateToDetail: (Int) -> Unit,
+    navigateToDetail: (String) -> Unit,
 ) {
     val fakeData = FakeDataSource.dummyHomePetResources
     Scaffold(modifier = modifier, topBar = { AllPetTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->

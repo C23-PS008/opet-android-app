@@ -249,6 +249,22 @@ fun PetDetailMapLocation(modifier: Modifier = Modifier, lat: Double, lon: Double
 
 @Composable
 fun BottomAction(modifier: Modifier = Modifier,  petDetailData: PetDetailData?) {
+    val context = LocalContext.current
+    val intentToPhone = {
+        val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", petDetailData?.user?.phoneNumber, null))
+        context.startActivity(intent)
+    }
+
+    val intentToMail = {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(petDetailData?.user?.email))
+            putExtra(Intent.EXTRA_SUBJECT, "OPET - Interest to your pet, ${petDetailData?.name}")
+        }
+        context.startActivity(intent)
+    }
+
+
     ElevatedCard(
         modifier
             .padding(horizontal = 16.dp)
@@ -274,11 +290,16 @@ fun BottomAction(modifier: Modifier = Modifier,  petDetailData: PetDetailData?) 
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                FilledIconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Phone, contentDescription = "")
+                if(!petDetailData?.user?.phoneNumber.isNullOrEmpty()) {
+                    FilledIconButton(onClick = { intentToPhone() }) {
+                        Icon(imageVector = Icons.Default.Phone, contentDescription = "")
+                    }
+
                 }
-                FilledIconButton(onClick = { /*TODO*/ }) {
-                    Icon(imageVector = Icons.Default.Email, contentDescription = "")
+                if(!petDetailData?.user?.email.isNullOrEmpty()) {
+                    FilledIconButton(onClick = { intentToMail() }) {
+                        Icon(imageVector = Icons.Default.Email, contentDescription = "")
+                    }
                 }
             }
         }

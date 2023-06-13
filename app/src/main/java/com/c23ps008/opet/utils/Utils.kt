@@ -114,7 +114,22 @@ fun getAddressName(context: Context, lat: Double, lon: Double): String {
     } catch (e: Exception) {
         Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
     }
-    return "s"
+    return ""
+}
+
+@Suppress("DEPRECATION")
+fun getCityName(context: Context, lat: Double, lon: Double): String {
+    val geocoder = Geocoder(context, Locale.getDefault())
+    try {
+        val list = geocoder.getFromLocation(lat, lon, 1)
+        if (list != null && list.size != 0) {
+            val address = list[0]
+            return address.adminArea
+        }
+    } catch (e: Exception) {
+        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+    }
+    return ""
 }
 
 fun checkLocationSetting(

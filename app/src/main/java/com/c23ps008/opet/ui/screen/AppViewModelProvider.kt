@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
+import com.c23ps008.opet.ui.screen.home.HomeViewModel
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
 import com.c23ps008.opet.ui.screen.my_post.MyPostViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
@@ -66,6 +67,12 @@ object AppViewModelProvider {
         initializer {
             UpdatePetViewModel(
                 this.createSavedStateHandle(),
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            HomeViewModel(
                 opetApplication().container.petRepository,
                 opetApplication().container.localDataStoreRepository
             )

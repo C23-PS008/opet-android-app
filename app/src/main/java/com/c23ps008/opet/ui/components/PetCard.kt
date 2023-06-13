@@ -16,12 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.c23ps008.opet.R
 import com.c23ps008.opet.data.FakeDataSource
 import com.c23ps008.opet.ui.theme.OPetTheme
@@ -42,7 +42,7 @@ fun PetCard(data: PetCardState, modifier: Modifier = Modifier, onClick: () -> Un
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(12.dp))
                     .padding(bottom = 8.dp),
-                painter = painterResource(id = data.image),
+                painter = rememberAsyncImagePainter(model = data.image),
                 contentDescription = stringResource(R.string.pet_image),
                 contentScale = ContentScale.Crop
             )
@@ -88,8 +88,8 @@ fun PetCardPreview() {
 }
 
 data class PetCardState(
-    val id: Int,
-    val image: Int,
+    val id: String,
+    val image: String,
     val breed: String,
     val name: String,
     val location: String,

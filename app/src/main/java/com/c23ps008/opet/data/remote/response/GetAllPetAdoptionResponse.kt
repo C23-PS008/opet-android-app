@@ -2,10 +2,10 @@ package com.c23ps008.opet.data.remote.response
 
 import com.google.gson.annotations.SerializedName
 
-data class MyPetsResponse(
+data class GetAllPetAdoptionResponse(
 
 	@field:SerializedName("data")
-	val data: List<MyPetsDataItem?>? = null,
+	val data: Data? = null,
 
 	@field:SerializedName("error")
 	val error: Boolean? = null,
@@ -14,7 +14,7 @@ data class MyPetsResponse(
 	val message: String? = null
 )
 
-data class MyPetsDataItem(
+data class PetAdoptionItem(
 
 	@field:SerializedName("petId")
 	val petId: String? = null,
@@ -46,11 +46,8 @@ data class MyPetsDataItem(
 	@field:SerializedName("name")
 	val name: String? = null,
 
-	@field:SerializedName("petCategory")
-	val petCategory: String? = null,
-
 	@field:SerializedName("pet_category")
-	val pet_category: PetCategory? = null,
+	val petCategory: PetCategory? = null,
 
 	@field:SerializedName("user")
 	val user: User? = null,
@@ -65,20 +62,11 @@ data class MyPetsDataItem(
 	val updatedAt: String? = null
 )
 
-data class PetCategory(
+data class Data(
 
-	@field:SerializedName("categoryName")
-	val categoryName: String? = null
-)
+	@field:SerializedName("count")
+	val count: Int? = null,
 
-data class User(
-
-	@field:SerializedName("phoneNumber")
-	val phoneNumber: String? = null,
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("email")
-	val email: String? = null
+	@field:SerializedName("rows")
+	val rows: List<PetAdoptionItem?>? = null
 )

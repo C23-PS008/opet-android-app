@@ -5,6 +5,7 @@ import com.c23ps008.opet.data.formdata.ProfileFormData
 import com.c23ps008.opet.data.formdata.RegisterFormData
 import com.c23ps008.opet.data.formdata.UploadPetResponse
 import com.c23ps008.opet.data.remote.response.DeleteMyPetsResponse
+import com.c23ps008.opet.data.remote.response.GetAllPetAdoptionResponse
 import com.c23ps008.opet.data.remote.response.LoginResponse
 import com.c23ps008.opet.data.remote.response.MyPetsResponse
 import com.c23ps008.opet.data.remote.response.PetDetailResponse
@@ -79,4 +80,13 @@ interface ApiBackendService {
         @Header("Authorization") authorization: String,
         @Path("petId") petId: String,
     ): PetDetailResponse
+
+    @GET("pets")
+    suspend fun getAllPetAdoption(
+        @Header("Authorization") authorization: String,
+        @Query("type") type: String = "all",
+        @Query("page") page: Int?,
+        @Query("size") size: Int?,
+        @Query("breed") breed: String?,
+    ): GetAllPetAdoptionResponse
 }

@@ -7,6 +7,21 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class PetRepository(private val apiService: ApiBackendService) {
+    suspend fun getAllPetAdoption(
+        token: String,
+        type: String = "all",
+        page: Int? = null,
+        size: Int? = null,
+        breed: String? = null,
+    ) =
+        apiService.getAllPetAdoption(
+            authorization = token,
+            type = type,
+            page = page,
+            size = size,
+            breed = breed
+        )
+
     suspend fun getDetail(token: String, petId: String) = apiService.getPet(token, petId)
     suspend fun updatePet(
         token: String,
