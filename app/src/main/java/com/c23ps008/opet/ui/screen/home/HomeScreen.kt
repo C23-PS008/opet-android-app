@@ -53,6 +53,7 @@ fun HomeScreen(
     navigateToViewAllPet: () -> Unit,
     navigateToPostPet: () -> Unit,
     navigateToMyPost: () -> Unit,
+    navigateToFindMatchDog: () -> Unit,
 ) {
     val petsForAdoptionState = viewModel.petAdoptionState.collectAsState(initial = UiState.Loading)
     val petsForAdoptionData = petsForAdoptionState.value
@@ -65,6 +66,8 @@ fun HomeScreen(
         navigateToViewAllPet = navigateToViewAllPet,
         navigateToPostPet = navigateToPostPet,
         navigateToMyPost = navigateToMyPost,
+        navigateToFindMatchDog = navigateToFindMatchDog,
+        navigateToFindMatchCat = {},
         petsForAdoptionData = petsForAdoptionData,
         getAllPetAdoption = { viewModel.getAllPetAdoption() }
     )
@@ -79,6 +82,8 @@ fun HomeContent(
     navigateToViewAllPet: () -> Unit,
     navigateToPostPet: () -> Unit,
     navigateToMyPost: () -> Unit,
+    navigateToFindMatchDog: () -> Unit,
+    navigateToFindMatchCat: () -> Unit,
     petsForAdoptionData: UiState<List<PetAdoptionItem?>>,
     getAllPetAdoption: () -> Unit,
 ) {
@@ -131,7 +136,7 @@ fun HomeContent(
                         label = stringResource(
                             id = R.string.dog
                         ),
-                        onClick = {/*TODO*/ }
+                        onClick = {navigateToFindMatchDog() }
                     )
                     FindYourMatchCard(
                         modifier = Modifier.weight(1f),
@@ -139,7 +144,7 @@ fun HomeContent(
                         label = stringResource(
                             id = R.string.cat
                         ),
-                        onClick = {/*TODO*/ }
+                        onClick = { navigateToFindMatchCat() }
                     )
                 }
                 SectionHeader(
@@ -203,6 +208,8 @@ fun HomeContentPreview() {
             navigateToViewAllPet = {},
             navigateToPostPet = {},
             navigateToMyPost = {},
+            navigateToFindMatchDog = {},
+            navigateToFindMatchCat = {},
             petsForAdoptionData = UiState.Loading,
             getAllPetAdoption = {}
         )

@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.c23ps008.opet.ui.screen.allpet.AllPetDestination
 import com.c23ps008.opet.ui.screen.allpet.AllPetScreen
+import com.c23ps008.opet.ui.screen.find_match_dog.FindMatchDogDestination
+import com.c23ps008.opet.ui.screen.find_match_dog.FindMatchDogScreen
 import com.c23ps008.opet.ui.screen.get_started.GetStartedDestination
 import com.c23ps008.opet.ui.screen.get_started.GetStartedScreen
 import com.c23ps008.opet.ui.screen.home.HomeDestination
@@ -81,7 +83,8 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
                 navigateToViewAllPet = { navController.navigate(AllPetDestination.route) },
                 navigateToMyPost = { navController.navigate(MyPostDestination.route) },
-                navigateToPostPet = { navController.navigate(PostCameraDestination.route) })
+                navigateToPostPet = { navController.navigate(PostCameraDestination.route) },
+                navigateToFindMatchDog = { navController.navigate(FindMatchDogDestination.route) })
         }
         composable(ProfileDestination.route) {
             ProfileScreen(
@@ -201,6 +204,9 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             MapNearbyPetScreen(
                 onNavigateUp = { navController.navigateUp() },
                 navigateToPetDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
+        }
+        composable(FindMatchDogDestination.route) {
+            FindMatchDogScreen(onNavigateUp = { navController.navigateUp() })
         }
     }
 }

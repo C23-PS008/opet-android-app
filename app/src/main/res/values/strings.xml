@@ -56,9 +56,11 @@
     <string name="please_tell_us_the_reason">Please tell us the reason</string>
     <string name="search_breed">Search Breed</string>
     <string name="error">error</string>
-    <string name="find_your_match_dog">find your match dog</string>
-    <string name="find_your_match_cat">find your match cat</string>
+    <string name="find_your_match_dog">Find Your Match Dog</string>
+    <string name="find_your_match_cat">Find Your Match Cat</string>
     <string name="cat">Cat</string>
     <string name="dog">Dog</string>
     <string name="search_with_camera">search with camera</string>
+    <string name="continue_label">Continue</string>
+    <string name="back">Back</string>
 </resources>
