@@ -24,6 +24,8 @@ android {
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
         buildConfigField "String", "BACKEND_API_ENDPOINT_URL", "\"${properties.getProperty("BACKEND_API_ENDPOINT_URL")}\""
+        buildConfigField "String", "DOG_PREDICT_API_ENDPOINT_URL", "\"${properties.getProperty("DOG_PREDICT_API_ENDPOINT_URL")}\""
+        buildConfigField "String", "CAT_PREDICT_API_ENDPOINT_URL", "\"${properties.getProperty("CAT_PREDICT_API_ENDPOINT_URL")}\""
     }
 
     buildTypes {

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
 import com.c23ps008.opet.ui.screen.allpet.AllPetViewModel
+import com.c23ps008.opet.ui.screen.find_match_cat.FindMatchCatViewModel
+import com.c23ps008.opet.ui.screen.find_match_dog.FindMatchDogViewModel
 import com.c23ps008.opet.ui.screen.home.HomeViewModel
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
 import com.c23ps008.opet.ui.screen.map_nearby_pet.NearbyPetViewModel
@@ -89,6 +91,16 @@ object AppViewModelProvider {
             NearbyPetViewModel(
                 opetApplication().container.petRepository,
                 opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            FindMatchDogViewModel(
+                opetApplication().container.dogPredictRepository
+            )
+        }
+        initializer {
+            FindMatchCatViewModel(
+                opetApplication().container.catPredictRepository
             )
         }
     }

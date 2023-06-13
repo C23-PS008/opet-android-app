@@ -63,4 +63,7 @@
     <string name="search_with_camera">search with camera</string>
     <string name="continue_label">Continue</string>
     <string name="back">Back</string>
+    <string name="calculate">Calculate</string>
+    <string name="result_not_found">Result Not Found</string>
+    <string name="breed">Breed</string>
 </resources>
