@@ -8,14 +8,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -24,18 +26,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.c23ps008.opet.R
-import com.c23ps008.opet.data.FakeDataSource
+import com.c23ps008.opet.data.remote.response.PetAdoptionItem
 import com.c23ps008.opet.ui.components.PetCard
 import com.c23ps008.opet.ui.components.PetCardState
 import com.c23ps008.opet.ui.navigation.NavigationDestination
+import com.c23ps008.opet.ui.screen.AppViewModelProvider
 import com.c23ps008.opet.ui.theme.OPetTheme
+import com.c23ps008.opet.utils.getCityName
 
 object AllPetDestination : NavigationDestination {
     override val route: String = "pets"
@@ -44,10 +56,23 @@ object AllPetDestination : NavigationDestination {
 @Composable
 fun AllPetScreen(
     modifier: Modifier = Modifier,
+    viewModel: AllPetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
     navigateToDetail: (String) -> Unit,
 ) {
-    AllPetScreenContent(modifier = modifier, onNavigateUp = onNavigateUp, navigateToDetail = navigateToDetail)
+    val petType = viewModel.petType.collectAsState(initial = "all")
+    val lazyPetAdoptionList = viewModel.pagingSource.collectAsLazyPagingItems()
+
+    AllPetScreenContent(
+        modifier = modifier,
+        onNavigateUp = onNavigateUp,
+        navigateToDetail = navigateToDetail,
+        lazyData = lazyPetAdoptionList,
+        petType = petType.value,
+        onPetTypeChange = {
+            viewModel.updatePetType(it)
+        },
+    )
 }
 
 @Composable
@@ -55,9 +80,21 @@ fun AllPetScreenContent(
     modifier: Modifier = Modifier,
     onNavigateUp: () -> Unit,
     navigateToDetail: (String) -> Unit,
+    lazyData: LazyPagingItems<PetAdoptionItem>?,
+    petType: String = "all",
+    onPetTypeChange: (String) -> Unit,
 ) {
-    val fakeData = FakeDataSource.dummyHomePetResources
-    Scaffold(modifier = modifier, topBar = { AllPetTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->
+    val context = LocalContext.current
+
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AllPetTopBar(
+                onNavigateUp = onNavigateUp,
+                petType = petType,
+                onPetTypeChange = onPetTypeChange
+            )
+        }) { paddingValues ->
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxWidth()
@@ -68,10 +105,42 @@ fun AllPetScreenContent(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = PaddingValues(bottom = 16.dp, top = 12.dp)
         ) {
-            items(fakeData, key = { it.id }) {
-                val cardState =
-                    PetCardState(it.id, it.pet_image, it.pet_breed, it.name, it.pet_address)
-                PetCard(data = cardState, onClick = { navigateToDetail(it.id) })
+            if (lazyData?.loadState?.refresh == LoadState.Loading) {
+                if (lazyData.loadState.append == LoadState.Loading) {
+                    item(span = { GridItemSpan(2) }) {
+                        Text(
+                            text = "Waiting for items to load from the backend",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(Alignment.CenterHorizontally)
+                        )
+                    }
+                }
+            }
+            if (lazyData != null) {
+                items(count = lazyData.itemCount, key = lazyData.itemKey()) { index ->
+                    val data = lazyData[index]
+                    val cardState =
+                        PetCardState(
+                            data?.petId.toString(),
+                            data?.photoUrl.toString(),
+                            data?.breed.toString(),
+                            data?.name.toString(),
+                            getCityName(context, data?.lat as Double, data.lon as Double)
+                        )
+                    PetCard(data = cardState, onClick = { navigateToDetail(data.petId.toString()) })
+                }
+            }
+            if (lazyData?.loadState?.append == LoadState.Loading) {
+                item(span = { GridItemSpan(2) }) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentWidth(
+                                Alignment.CenterHorizontally
+                            )
+                    )
+                }
             }
         }
     }
@@ -79,7 +148,12 @@ fun AllPetScreenContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AllPetTopBar(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
+fun AllPetTopBar(
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit,
+    petType: String,
+    onPetTypeChange: (String) -> Unit,
+) {
     Column(modifier = modifier) {
         TopAppBar(title = { Text(text = "Pets for Adoption") }, navigationIcon = {
             IconButton(
@@ -107,13 +181,13 @@ fun AllPetTopBar(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
             }
         )
         Spacer(modifier = Modifier.padding(bottom = 12.dp))
-        PetFilter()
+        PetFilter(petType = petType, onPetTypeChange = onPetTypeChange)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PetFilter(modifier: Modifier = Modifier) {
+fun PetFilter(modifier: Modifier = Modifier, petType: String, onPetTypeChange: (String) -> Unit) {
     val filterList = listOf(
         FilterChipStat(
             icon = painterResource(id = R.drawable.paw_prints),
@@ -139,12 +213,16 @@ fun PetFilter(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         repeat(filterList.size) {
-            FilterChip(selected = false, onClick = { /*TODO*/ }, leadingIcon = {
-                Icon(
-                    painter = filterList[it].icon,
-                    contentDescription = filterList[it].value
-                )
-            }, label = { Text(text = filterList[it].label) })
+            FilterChip(
+                selected = petType == filterList[it].value,
+                onClick = { onPetTypeChange(filterList[it].value) },
+                leadingIcon = {
+                    Icon(
+                        painter = filterList[it].icon,
+                        contentDescription = filterList[it].value
+                    )
+                },
+                label = { Text(text = filterList[it].label) })
         }
     }
 }
@@ -155,6 +233,10 @@ data class FilterChipStat(val icon: Painter, val label: String, val value: Strin
 @Composable
 fun AllPetScreenContentPreview() {
     OPetTheme {
-        AllPetScreenContent(onNavigateUp = {}, navigateToDetail = {})
+        AllPetScreenContent(
+            onNavigateUp = {},
+            navigateToDetail = {},
+            lazyData = null,
+            onPetTypeChange = {})
     }
 }

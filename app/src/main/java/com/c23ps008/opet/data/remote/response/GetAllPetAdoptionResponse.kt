@@ -68,5 +68,5 @@ data class Data(
 	val count: Int? = null,
 
 	@field:SerializedName("rows")
-	val rows: List<PetAdoptionItem?>? = null
+	val rows: List<PetAdoptionItem>
 )

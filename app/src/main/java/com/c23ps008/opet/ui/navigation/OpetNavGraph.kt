@@ -134,12 +134,15 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 navigateToHome = { navController.navigate(HomeDestination.route) },
                 navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
                 navigateToPostPet = { navController.navigate(PostCameraDestination.route) },
-                navigateToEdit = {navController.navigate("${UpdatePetDestination.route}/$it")}
+                navigateToEdit = { navController.navigate("${UpdatePetDestination.route}/$it") }
             )
         }
-        composable(route = UpdatePetDestination.routeWithArgs, arguments = listOf(navArgument(UpdatePetDestination.petIdArg) {
-            type = NavType.StringType
-        })) {
+        composable(
+            route = UpdatePetDestination.routeWithArgs,
+            arguments = listOf(navArgument(UpdatePetDestination.petIdArg) {
+                type = NavType.StringType
+            })
+        ) {
             UpdatePetScreen()
         }
         composable(PostCameraDestination.route) {
@@ -195,7 +198,9 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             // })
         }
         composable(MapNearbyPetDestination.route) {
-            MapNearbyPetScreen(onNavigateUp = { navController.navigateUp() })
+            MapNearbyPetScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToPetDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
         }
     }
 }

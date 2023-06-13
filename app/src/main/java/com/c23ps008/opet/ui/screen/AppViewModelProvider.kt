@@ -6,8 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
+import com.c23ps008.opet.ui.screen.allpet.AllPetViewModel
 import com.c23ps008.opet.ui.screen.home.HomeViewModel
 import com.c23ps008.opet.ui.screen.login.LoginViewModel
+import com.c23ps008.opet.ui.screen.map_nearby_pet.NearbyPetViewModel
 import com.c23ps008.opet.ui.screen.my_post.MyPostViewModel
 import com.c23ps008.opet.ui.screen.permissions_dialog.PermissionsViewModel
 import com.c23ps008.opet.ui.screen.pet_detail.PetDetailViewModel
@@ -73,6 +75,18 @@ object AppViewModelProvider {
         }
         initializer {
             HomeViewModel(
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            AllPetViewModel(
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            NearbyPetViewModel(
                 opetApplication().container.petRepository,
                 opetApplication().container.localDataStoreRepository
             )

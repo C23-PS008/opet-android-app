@@ -9,6 +9,7 @@ import android.location.Location
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -36,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,8 +56,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.c23ps008.opet.R
-import com.c23ps008.opet.data.FakeDataSource
-import com.c23ps008.opet.data.PetData
+import com.c23ps008.opet.data.remote.response.PetAdoptionItem
+import com.c23ps008.opet.ui.common.UiState
 import com.c23ps008.opet.ui.navigation.NavigationDestination
 import com.c23ps008.opet.ui.screen.AppViewModelProvider
 import com.c23ps008.opet.ui.screen.permissions_dialog.LocationPermissionTextProvider
@@ -80,8 +83,10 @@ object MapNearbyPetDestination : NavigationDestination {
 @Composable
 fun MapNearbyPetScreen(
     modifier: Modifier = Modifier,
+    viewModel: NearbyPetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     permissionsViewModel: PermissionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
+    navigateToPetDetail: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -143,9 +148,13 @@ fun MapNearbyPetScreen(
     }
 
     if (permissionGranted) {
+        val mapDataState = viewModel.mapDataState.collectAsState(initial = UiState.Loading).value
         MapNearbyPetContent(
             modifier = modifier,
             onNavigateUp = onNavigateUp,
+            mapDataState = mapDataState,
+            getListPet = {viewModel.getListPet()},
+            navigateToPetDetail = {navigateToPetDetail(it)}
         )
     }
 }
@@ -153,7 +162,18 @@ fun MapNearbyPetScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("MissingPermission")
 @Composable
-fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
+fun MapNearbyPetContent(
+    modifier: Modifier = Modifier,
+    onNavigateUp: () -> Unit,
+    mapDataState: UiState<List<PetAdoptionItem>>,
+    getListPet: () -> Unit,
+    navigateToPetDetail: (String) -> Unit
+) {
+    var isLoading by remember { mutableStateOf(false) }
+    var listOfNearbyPet by remember {
+        mutableStateOf(listOf(PetAdoptionItem()))
+    }
+    var selectedPet by remember { mutableStateOf(0) }
     val jakartaPos = LatLng(-6.208499708116554, 106.84122912722904)
     val context = LocalContext.current
     var isMapLoaded by remember { mutableStateOf(false) }
@@ -207,13 +227,34 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
         cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(cameraPosition), 1000)
     }
 
+    when (mapDataState) {
+        is UiState.Error -> {
+            isLoading = false
+            Toast.makeText(context, mapDataState.message, Toast.LENGTH_SHORT).show()
+        }
+        is UiState.Loading -> {
+            isLoading = true
+            getListPet()
+        }
+        is UiState.Success -> {
+            isLoading = false
+            listOfNearbyPet = mapDataState.data
+        }
+    }
+
     DetailBottomSheet(
-        petData = FakeDataSource.dummyHomePetResources[0],
-        scaffoldState = scaffoldState
+        petData = listOfNearbyPet[selectedPet],
+        scaffoldState = scaffoldState,
+        navigateToPetDetail = navigateToPetDetail
     ) {
         Scaffold(
             modifier = modifier,
-            topBar = { MapNearbyTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->
+            topBar = {
+                MapNearbyTopBar(
+                    onNavigateUp = onNavigateUp,
+                    isLoading = isLoading
+                )
+            }) { paddingValues ->
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -243,17 +284,27 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
                     },
                     cameraPositionState = cameraPositionState
                 ) {
-                    Marker(
-                        state = MarkerState(position = jakartaPos),
-                        title = "Jakarta Pos",
-                        snippet = "Marker in Jakarta Post",
-                        onClick = {
-                            coroutineScope.launch {
-                                scaffoldState.bottomSheetState.expand()
-                            }
-                            return@Marker true
+                    listOfNearbyPet.forEachIndexed {index, pet ->
+                        if(pet.lat != null && pet.lon != null) {
+                            Marker(
+                                state = MarkerState(
+                                    position = LatLng(
+                                        pet.lat as Double,
+                                        pet.lon as Double
+                                    )
+                                ),
+                                title = pet.name,
+                                snippet = pet.name,
+                                onClick = {
+                                    selectedPet = index
+                                    coroutineScope.launch {
+                                        scaffoldState.bottomSheetState.expand()
+                                    }
+                                    return@Marker true
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
         }
@@ -264,8 +315,9 @@ fun MapNearbyPetContent(modifier: Modifier = Modifier, onNavigateUp: () -> Unit)
 @Composable
 fun DetailBottomSheet(
     modifier: Modifier = Modifier,
-    petData: PetData,
+    petData: PetAdoptionItem,
     scaffoldState: BottomSheetScaffoldState,
+    navigateToPetDetail: (String) -> Unit,
     content: @Composable () -> Unit,
 ) {
     BottomSheetScaffold(
@@ -284,7 +336,7 @@ fun DetailBottomSheet(
                         .aspectRatio(1f)
                         .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop,
-                    painter = rememberAsyncImagePainter(model = petData.pet_image),
+                    painter = rememberAsyncImagePainter(model = petData.photoUrl),
                     contentDescription = null
                 )
                 Column(
@@ -296,12 +348,12 @@ fun DetailBottomSheet(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = petData.name)
-                            Text(text = petData.pet_breed)
+                            Text(text = petData.name.toString())
+                            Text(text = petData.breed.toString())
                         }
                         Text(text = "2 KM Near you")
                     }
-                    FilledTonalButton(modifier = Modifier.fillMaxWidth(), onClick = { }) {
+                    FilledTonalButton(modifier = Modifier.fillMaxWidth(), onClick = { navigateToPetDetail(petData.petId.toString()) }) {
                         Text(text = "View Detail")
                     }
                 }
@@ -314,7 +366,7 @@ fun DetailBottomSheet(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapNearbyTopBar(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
+fun MapNearbyTopBar(modifier: Modifier = Modifier, onNavigateUp: () -> Unit, isLoading: Boolean) {
     CenterAlignedTopAppBar(
         modifier = modifier.fillMaxWidth(),
         title = { Text(text = "Nearby Pets") },
@@ -327,13 +379,19 @@ fun MapNearbyTopBar(modifier: Modifier = Modifier, onNavigateUp: () -> Unit) {
                     contentDescription = stringResource(id = R.string.menu_back)
                 )
             }
-        })
+        },
+        actions = {
+            if (isLoading) {
+                CircularProgressIndicator()
+            }
+        }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MapNearbyPetContentPreview() {
     OPetTheme {
-        MapNearbyPetContent(onNavigateUp = {})
+        MapNearbyPetContent(onNavigateUp = {}, mapDataState = UiState.Loading, getListPet = {}, navigateToPetDetail = {})
     }
 }
