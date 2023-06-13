@@ -54,6 +54,7 @@ fun HomeScreen(
     navigateToPostPet: () -> Unit,
     navigateToMyPost: () -> Unit,
     navigateToFindMatchDog: () -> Unit,
+    navigateToFindMatchCat: () -> Unit,
 ) {
     val petsForAdoptionState = viewModel.petAdoptionState.collectAsState(initial = UiState.Loading)
     val petsForAdoptionData = petsForAdoptionState.value
@@ -67,7 +68,7 @@ fun HomeScreen(
         navigateToPostPet = navigateToPostPet,
         navigateToMyPost = navigateToMyPost,
         navigateToFindMatchDog = navigateToFindMatchDog,
-        navigateToFindMatchCat = {},
+        navigateToFindMatchCat = navigateToFindMatchCat,
         petsForAdoptionData = petsForAdoptionData,
         getAllPetAdoption = { viewModel.getAllPetAdoption() }
     )
