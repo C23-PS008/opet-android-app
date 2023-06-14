@@ -41,6 +41,7 @@ import com.c23ps008.opet.data.formdata.ProfileFormData
 import com.c23ps008.opet.data.remote.response.UserMeResponseData
 import com.c23ps008.opet.ui.common.UiState
 import com.c23ps008.opet.ui.components.EmailTextField
+import com.c23ps008.opet.ui.components.LoadingDialog
 import com.c23ps008.opet.ui.components.NameTextField
 import com.c23ps008.opet.ui.components.PhoneTextField
 import com.c23ps008.opet.ui.navigation.NavigationDestination
@@ -142,6 +143,10 @@ fun ProfileContent(
 
     var isLoading by remember { mutableStateOf(false) }
 
+    if(isLoading) {
+        LoadingDialog(onDismiss = {})
+    }
+
     Scaffold(topBar = {
         ProfileTopBar(
             onNavigateUp = onNavigateUp,
@@ -187,9 +192,6 @@ fun ProfileContent(
                 }) {
                     Text(text = stringResource(R.string.save))
                 }
-            }
-            if(isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
 

@@ -35,6 +35,7 @@ import com.c23ps008.opet.ui.components.AuthFooter
 import com.c23ps008.opet.ui.components.AuthHeader
 import com.c23ps008.opet.ui.components.AuthTitle
 import com.c23ps008.opet.ui.components.EmailTextField
+import com.c23ps008.opet.ui.components.LoadingDialog
 import com.c23ps008.opet.ui.components.NameTextField
 import com.c23ps008.opet.ui.components.PasswordTextField
 import com.c23ps008.opet.ui.navigation.NavigationDestination
@@ -96,6 +97,10 @@ fun RegisterContent(
     var confirmPassword by remember { mutableStateOf("") }
 
     var isLoading by remember { mutableStateOf(false) }
+
+    if(isLoading) {
+        LoadingDialog(onDismiss = {})
+    }
 
     Column(
         modifier = modifier
