@@ -228,7 +228,7 @@ fun DetailBottomSheet(
         scaffoldState = scaffoldState,
         sheetContainerColor = Color.White,
         sheetContent = {
-            Column() {
+            Column {
                 Image(
                     modifier = Modifier
                         .fillMaxWidth()

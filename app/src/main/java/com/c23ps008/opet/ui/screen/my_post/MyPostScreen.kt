@@ -185,7 +185,7 @@ fun MyPostContent(
                                     R.string.my_pet
                                 )
                             )
-                            Column() {
+                            Column {
                                 Text(
                                     text = it?.name.toString(),
                                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
@@ -308,7 +308,7 @@ fun DeleteConfirmDialog(
                 Spacer(modifier = Modifier.padding(bottom = 8.dp))
                 Text(text = stringResource(R.string.please_tell_us_the_reason))
                 Spacer(modifier = Modifier.padding(bottom = 12.dp))
-                Column() {
+                Column {
                     reasonList.forEachIndexed { index, text ->
                         Row(
                             modifier = Modifier

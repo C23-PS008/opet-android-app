@@ -25,19 +25,13 @@
     <string name="post">Post</string>
     <string name="lets_describe_the_pet">Lets Describe the Pet</string>
     <string name="about">About</string>
-    <string name="contact_me">Contact Me</string>
     <string name="add_location">add location</string>
     <string name="gender">Gender</string>
     <string name="age">Age</string>
-    <string name="cat_name">Cat Name</string>
-    <string name="dog_name">Dog Name</string>
-    <string name="select_dog_breed">Select Dog Breed</string>
     <string name="select_cat_breed">Select Cat Breed</string>
-    <string name="contact_name_required">Contact Name *</string>
     <string name="get_started_picture">get started picture</string>
     <string name="get_started">Get Started</string>
     <string name="pet_for_adoption_image">pet for adoption image</string>
-    <string name="menu_more">menu_more</string>
     <string name="menu_search">menu_search</string>
     <string name="my_pet">my pet</string>
     <string name="view_action">view action</string>
@@ -60,7 +54,6 @@
     <string name="find_your_match_cat">Find Your Match Cat</string>
     <string name="cat">Cat</string>
     <string name="dog">Dog</string>
-    <string name="search_with_camera">search with camera</string>
     <string name="continue_label">Continue</string>
     <string name="back">Back</string>
     <string name="calculate">Calculate</string>
