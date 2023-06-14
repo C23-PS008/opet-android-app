@@ -103,7 +103,7 @@ fun RegisterContent(
             .verticalScroll(rememberScrollState())
     ) {
         AuthHeader(height = 161.dp) {
-            IconButton(modifier = Modifier.padding(top = 36.dp), onClick = onNavigateUp) {
+            IconButton(modifier = Modifier.padding(top = 36.dp, start = 16.dp), onClick = onNavigateUp) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = stringResource(R.string.menu_back)
