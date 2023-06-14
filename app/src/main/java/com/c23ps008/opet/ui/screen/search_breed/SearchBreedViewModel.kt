@@ -1,4 +1,4 @@
-package com.c23ps008.opet.ui.screen.allpet
+package com.c23ps008.opet.ui.screen.search_breed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,21 +13,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 
-class AllPetViewModel(
+class SearchBreedViewModel(
     private val petRepository: PetRepository,
     private val localDataStoreRepository: LocalDataStoreRepository,
 ) : ViewModel() {
-    private val _petType = MutableStateFlow("all")
-    val petType : StateFlow<String> = _petType
+    private val _searchQuery = MutableStateFlow("")
+    private val searchQuery : StateFlow<String> = _searchQuery
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val pagingSource = petType.flatMapLatest { type ->
+    val pagingSource = searchQuery.flatMapLatest { query ->
         Pager(PagingConfig(pageSize = 20)) {
-            PetAdoptionListDataSource(petRepository, localDataStoreRepository, type)
+            PetAdoptionListDataSource(petRepository, localDataStoreRepository, petBreed = query)
         }.flow
     }.cachedIn(viewModelScope)
 
-    fun updatePetType(type: String) {
-        _petType.value = type
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
     }
 }

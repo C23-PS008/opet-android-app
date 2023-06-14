@@ -19,6 +19,7 @@ import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
 import com.c23ps008.opet.ui.screen.post_pet.PostPetViewModel
 import com.c23ps008.opet.ui.screen.profile.ProfileViewModel
 import com.c23ps008.opet.ui.screen.register.RegisterViewModel
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedViewModel
 import com.c23ps008.opet.ui.screen.splash.SplashViewModel
 import com.c23ps008.opet.ui.screen.update_pet.UpdatePetViewModel
 
@@ -101,6 +102,12 @@ object AppViewModelProvider {
         initializer {
             FindMatchCatViewModel(
                 opetApplication().container.catPredictRepository
+            )
+        }
+        initializer {
+            SearchBreedViewModel(
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
             )
         }
     }

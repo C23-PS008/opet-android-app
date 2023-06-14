@@ -38,6 +38,8 @@ import com.c23ps008.opet.ui.screen.profile.ProfileDestination
 import com.c23ps008.opet.ui.screen.profile.ProfileScreen
 import com.c23ps008.opet.ui.screen.register.RegisterDestination
 import com.c23ps008.opet.ui.screen.register.RegisterScreen
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedDestination
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedScreen
 import com.c23ps008.opet.ui.screen.splash.SplashDestination
 import com.c23ps008.opet.ui.screen.splash.SplashScreen
 import com.c23ps008.opet.ui.screen.update_pet.UpdatePetDestination
@@ -87,7 +89,8 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 navigateToMyPost = { navController.navigate(MyPostDestination.route) },
                 navigateToPostPet = { navController.navigate(PostCameraDestination.route) },
                 navigateToFindMatchDog = { navController.navigate(FindMatchDogDestination.route) },
-                navigateToFindMatchCat = { navController.navigate(FindMatchCatDestination.route) })
+                navigateToFindMatchCat = { navController.navigate(FindMatchCatDestination.route) },
+                navigateToSearchBreed = { navController.navigate(SearchBreedDestination.route) })
         }
         composable(ProfileDestination.route) {
             ProfileScreen(
@@ -133,7 +136,9 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
         composable(AllPetDestination.route) {
             AllPetScreen(onNavigateUp = { navController.navigateUp() }, navigateToDetail = {
                 navController.navigate("${PetDetailDestination.route}/$it")
-            })
+            },
+                navigateToSearchBreed = { navController.navigate(SearchBreedDestination.route) }
+            )
         }
         composable(MyPostDestination.route) {
             MyPostScreen(
@@ -212,7 +217,12 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             FindMatchDogScreen(onNavigateUp = { navController.navigateUp() })
         }
         composable(FindMatchCatDestination.route) {
-            FindMatchCatScreen(onNavigateUp = {navController.navigateUp()})
+            FindMatchCatScreen(onNavigateUp = { navController.navigateUp() })
+        }
+        composable(SearchBreedDestination.route) {
+            SearchBreedScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
         }
     }
 }

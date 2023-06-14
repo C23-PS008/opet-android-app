@@ -10,7 +10,7 @@ import com.c23ps008.opet.utils.createErrorResponse
 import kotlinx.coroutines.flow.firstOrNull
 import retrofit2.HttpException
 
-class PetAdoptionListDataSource(private val petRepository: PetRepository, private val localDataStoreRepository: LocalDataStoreRepository, private val type: String = "all"): PagingSource<Int, PetAdoptionItem>() {
+class PetAdoptionListDataSource(private val petRepository: PetRepository, private val localDataStoreRepository: LocalDataStoreRepository, private val type: String = "all", private val petBreed: String? = null): PagingSource<Int, PetAdoptionItem>() {
     override fun getRefreshKey(state: PagingState<Int, PetAdoptionItem>): Int? {
         return state.anchorPosition?.let {
             state.closestPageToPosition(it)?.prevKey?.plus(1)
@@ -27,7 +27,8 @@ class PetAdoptionListDataSource(private val petRepository: PetRepository, privat
                 token = token.toString(),
                 type = type,
                 page = pageNumber,
-                size = 10
+                size = 10,
+                breed = petBreed
             )
             val prevKey = if (pageNumber > 0) pageNumber - 1 else null
             val nextKey =

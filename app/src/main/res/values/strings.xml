@@ -66,4 +66,5 @@
     <string name="calculate">Calculate</string>
     <string name="result_not_found">Result Not Found</string>
     <string name="breed">Breed</string>
+    <string name="search_with_image">search with image</string>
 </resources>

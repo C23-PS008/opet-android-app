@@ -83,6 +83,10 @@ object PetBreedData {
         "Wirehaired Vizsla", "Xoloitzcuintli", "Yorkshire Terrier"
     )
 
+    fun getAll(): List<String> {
+        return (cat + dog).distinct()
+    }
+
     fun getCatBreed(): List<String> {
         return cat
     }

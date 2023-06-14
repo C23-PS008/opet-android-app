@@ -55,6 +55,7 @@ fun HomeScreen(
     navigateToMyPost: () -> Unit,
     navigateToFindMatchDog: () -> Unit,
     navigateToFindMatchCat: () -> Unit,
+    navigateToSearchBreed: () -> Unit,
 ) {
     val petsForAdoptionState = viewModel.petAdoptionState.collectAsState(initial = UiState.Loading)
     val petsForAdoptionData = petsForAdoptionState.value
@@ -69,8 +70,9 @@ fun HomeScreen(
         navigateToMyPost = navigateToMyPost,
         navigateToFindMatchDog = navigateToFindMatchDog,
         navigateToFindMatchCat = navigateToFindMatchCat,
+        navigateToSearchBreed = navigateToSearchBreed,
         petsForAdoptionData = petsForAdoptionData,
-        getAllPetAdoption = { viewModel.getAllPetAdoption() }
+        getAllPetAdoption = { viewModel.getAllPetAdoption() },
     )
 }
 
@@ -85,6 +87,7 @@ fun HomeContent(
     navigateToMyPost: () -> Unit,
     navigateToFindMatchDog: () -> Unit,
     navigateToFindMatchCat: () -> Unit,
+    navigateToSearchBreed: () -> Unit,
     petsForAdoptionData: UiState<List<PetAdoptionItem?>>,
     getAllPetAdoption: () -> Unit,
 ) {
@@ -119,7 +122,7 @@ fun HomeContent(
                             verticalArrangement = Arrangement.spacedBy(24.dp)
                         ) {
                             HomeHeader(navigateToProfile = navigateToProfile)
-                            HomeSearchBar()
+                            HomeSearchBar(onClick = navigateToSearchBreed)
                         }
                     }
                     HomeExploreMenu(navigateToMapNearby = navigateToMapNearby)
@@ -211,6 +214,7 @@ fun HomeContentPreview() {
             navigateToMyPost = {},
             navigateToFindMatchDog = {},
             navigateToFindMatchCat = {},
+            navigateToSearchBreed = {},
             petsForAdoptionData = UiState.Loading,
             getAllPetAdoption = {}
         )
