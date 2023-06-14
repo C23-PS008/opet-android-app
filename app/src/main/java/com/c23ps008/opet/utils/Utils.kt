@@ -5,12 +5,22 @@ import android.content.Context
 import android.content.IntentSender
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.location.Geocoder
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.IntentSenderRequest
+import androidx.core.graphics.drawable.toBitmap
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import coil.size.Scale
 import com.c23ps008.opet.ml.PetImageAnalysis
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.LocationRequest
@@ -18,6 +28,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.gson.Gson
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
@@ -76,6 +88,43 @@ val classLabels = listOf(
     "Wheaten Terrier",
     "Yorkshire Terrier"
 )
+
+suspend fun loadIcon(
+    context: Context,
+    url: String?,
+    width: Int,
+    height: Int,
+): BitmapDescriptor? {
+    return try {
+        val loader = ImageLoader(context)
+        val req = ImageRequest.Builder(context).data(url).size(width, height).scale(Scale.FILL).allowHardware(false).build()
+
+        val result = (loader.execute(req) as SuccessResult).drawable
+        val bitmap = result.toBitmap()
+
+        val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(output)
+
+        val paint = Paint().apply {
+            isAntiAlias = true
+            color = Color.RED
+        }
+
+        val radius = bitmap.width.coerceAtMost(bitmap.height) / 2f
+        val centerX = bitmap.width / 2f
+        val centerY = bitmap.height / 2f
+
+        canvas.drawCircle(centerX, centerY, radius, paint)
+
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
+        canvas.drawBitmap(bitmap, 0f, 0f, paint)
+
+        BitmapDescriptorFactory.fromBitmap(output)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
 
 fun createErrorResponse(e: HttpException): ErrorResponse {
     val errorJSONString = e.response()?.errorBody()?.string()
@@ -145,7 +194,8 @@ fun checkLocationSetting(
     val gpsSettingTask =
         client.checkLocationSettings(builder.build())
     gpsSettingTask.addOnSuccessListener {
-        onEnabled() }
+        onEnabled()
+    }
     gpsSettingTask.addOnFailureListener { exception ->
         if (exception is ResolvableApiException) {
             try {
