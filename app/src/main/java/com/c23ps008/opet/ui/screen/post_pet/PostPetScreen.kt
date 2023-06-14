@@ -76,6 +76,7 @@ fun PostPetScreen(
     viewModel: PostPetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     permissionsViewModel: PermissionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToUploadPetSuccess: () -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -159,7 +160,8 @@ fun PostPetScreen(
                         }
                     }
                 }
-            }
+            },
+            onNavigateUp = onNavigateUp
         )
     }
 }
@@ -170,6 +172,7 @@ fun PostPetContent(
     imageUri: String,
     file: File?,
     onPostClick: (PostPetFormData, (Boolean) -> Unit) -> Unit,
+    onNavigateUp: () -> Unit
 ) {
     var formData by remember { mutableStateOf(PostPetFormData(image = file)) }
     var isLoading by remember { mutableStateOf(false) }
@@ -195,7 +198,8 @@ fun PostPetContent(
             modifier = Modifier.padding(paddingValues),
             imageUri = imageUri,
             formData = formData,
-            onFormDataChange = { formData = it }
+            onFormDataChange = { formData = it },
+            onNavigateUp = onNavigateUp
         )
     }
 }
@@ -207,6 +211,7 @@ fun PostPetEntry(
     imageUri: String,
     formData: PostPetFormData,
     onFormDataChange: (PostPetFormData) -> Unit,
+    onNavigateUp: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -280,7 +285,7 @@ fun PostPetEntry(
                 contentDescription = "null",
                 contentScale = ContentScale.Crop
             )
-            FilledTonalIconButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(16.dp)) {
+            FilledTonalIconButton(onClick = { onNavigateUp() }, modifier = Modifier.padding(16.dp)) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = stringResource(id = R.string.menu_back)
@@ -424,6 +429,6 @@ fun BottomAction(modifier: Modifier = Modifier, onSubmit: () -> Unit, isEnabled:
 @Composable
 fun PostPetContentPreview() {
     OPetTheme {
-        PostPetContent(imageUri = "", onPostClick = { _, _ -> }, file = null)
+        PostPetContent(imageUri = "", onPostClick = { _, _ -> }, file = null, onNavigateUp = {})
     }
 }

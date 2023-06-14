@@ -67,13 +67,14 @@ object FindMatchCatDestination : NavigationDestination {
 fun FindMatchCatScreen(
     viewModel: FindMatchCatViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
+    navigateToCalculatedResult: (String) -> Unit,
 ) {
     val dataState = viewModel.dataState.collectAsState().value
     var isCalculated by rememberSaveable {
         mutableStateOf(false)
     }
     if (isCalculated) {
-        FindMatchCatCalculatedContent(onNavigateUp = onNavigateUp, dataState = dataState)
+        FindMatchCatCalculatedContent(onNavigateUp = onNavigateUp, dataState = dataState, navigateToCalculatedResult)
     } else {
         FindMatchCatContent(onNavigateUp = onNavigateUp, onCalculateClick = { data ->
             val catPredictFormData = CatPredictFormData(
@@ -90,6 +91,7 @@ fun FindMatchCatScreen(
 fun FindMatchCatCalculatedContent(
     onNavigateUp: () -> Unit,
     dataState: UiState<CatPredictResponse>,
+    navigateToCalculatedResult: (String) -> Unit,
 ) {
     Scaffold(topBar = { FindMatchTopBar(onNavigateUp = onNavigateUp) }) { paddingValues ->
         Box(
@@ -163,7 +165,7 @@ fun FindMatchCatCalculatedContent(
                                                             8.dp
                                                         )
                                                     ) {
-                                                        Button(onClick = { /*TODO*/ }) {
+                                                        Button(onClick = { navigateToCalculatedResult(it?.breed.toString()) }) {
                                                             Text(text = "Find Cat")
                                                         }
                                                     }

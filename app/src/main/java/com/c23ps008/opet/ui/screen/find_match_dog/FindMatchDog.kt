@@ -75,13 +75,14 @@ object FindMatchDogDestination : NavigationDestination {
 fun FindMatchDogScreen(
     viewModel: FindMatchDogViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
+    navigateToCalculatedResult: (String) -> Unit,
 ) {
     val dataState = viewModel.dataState.collectAsState().value
     var isCalculated by rememberSaveable {
         mutableStateOf(false)
     }
     if (isCalculated) {
-        FindMatchDogCalculatedContent(dataState = dataState, onNavigateUp = onNavigateUp)
+        FindMatchDogCalculatedContent(dataState = dataState, onNavigateUp = onNavigateUp, navigateToCalculatedResult = navigateToCalculatedResult)
     } else {
         FindMatchDogContent(onNavigateUp = onNavigateUp, onCalculateClick = { data ->
             val dogPredictFormData = DogPredictFormData(
@@ -100,6 +101,7 @@ fun FindMatchDogScreen(
 fun FindMatchDogCalculatedContent(
     onNavigateUp: () -> Unit,
     dataState: UiState<DogPredictResponse>,
+    navigateToCalculatedResult: (String) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -193,7 +195,7 @@ fun FindMatchDogCalculatedContent(
                                                             }) {
                                                                 Text(text = "Learn More")
                                                             }
-                                                            Button(onClick = { /*TODO*/ }) {
+                                                            Button(onClick = { navigateToCalculatedResult(it?.breed.toString()) }) {
                                                                 Text(text = "Find Dog")
                                                             }
                                                         }

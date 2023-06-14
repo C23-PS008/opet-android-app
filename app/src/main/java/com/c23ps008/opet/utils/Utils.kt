@@ -39,42 +39,42 @@ data class ErrorResponse(
 
 val classLabels = listOf(
     "Abyssinian",
-    "american_bulldog",
-    "american_pit_bull_terrier",
-    "basset_hound",
-    "beagle",
+    "American Bulldog",
+    "American Pit Bull Terrier",
+    "Basset Hound",
+    "Beagle",
     "Bengal",
     "Birman",
     "Bombay",
-    "boxer",
-    "British_Shorthair",
-    "chihuahua",
-    "Egyptian_Mau",
-    "english_cocker_spaniel",
-    "english_setter",
-    "german_shorthaired",
-    "great_pyrenees",
-    "havanese",
-    "japanese_chin",
-    "keeshond",
-    "leonberger",
-    "Maine_Coon",
-    "miniature_pinscher",
-    "newfoundland",
+    "Boxer",
+    "British Shorthair",
+    "Chihuahua",
+    "Egyptian Mau",
+    "English Cocker Spaniel",
+    "English Setter",
+    "German Shorthaired",
+    "Great Pyrenees",
+    "Havanese",
+    "Japanese Chin",
+    "Keeshond",
+    "Leonberger",
+    "Maine Coon",
+    "Miniature Pinscher",
+    "Newfoundland",
     "Persian",
-    "pomeranian",
-    "pug",
+    "Pomeranian",
+    "Pug",
     "Ragdoll",
-    "Russian_Blue",
-    "saint_bernard",
-    "samoyed",
-    "scottish_terrier",
-    "shiba_inu",
+    "Russian Blue",
+    "Saint Bernard",
+    "Samoyed",
+    "Scottish Terrier",
+    "Shiba Inu",
     "Siamese",
     "Sphynx",
-    "staffordshire_bull_terrier",
-    "wheaten_terrier",
-    "yorkshire_terrier"
+    "Staffordshire Bull Terrier",
+    "Wheaten Terrier",
+    "Yorkshire Terrier"
 )
 
 fun createErrorResponse(e: HttpException): ErrorResponse {
@@ -231,9 +231,7 @@ fun classifyPetImage(context: Context, bitmap: Bitmap, inputSize: Int): String {
     val result = classLabels[maxPos]
     Log.d("TESTS", "classifyPetImage: $result with confidences: $maxConfidences")
 
-    return result
-
-    // Releases model resources if no longer used.
-    @Suppress("UNREACHABLE_CODE")
     model.close()
+
+    return result
 }

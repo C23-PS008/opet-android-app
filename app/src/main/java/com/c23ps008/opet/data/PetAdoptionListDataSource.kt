@@ -7,6 +7,7 @@ import com.c23ps008.opet.data.remote.response.PetAdoptionItem
 import com.c23ps008.opet.data.repository.LocalDataStoreRepository
 import com.c23ps008.opet.data.repository.PetRepository
 import com.c23ps008.opet.utils.createErrorResponse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.firstOrNull
 import retrofit2.HttpException
 
@@ -19,6 +20,7 @@ class PetAdoptionListDataSource(private val petRepository: PetRepository, privat
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PetAdoptionItem> {
+        delay(1000)
         return try {
             val pageNumber = params.key ?: 0
             Log.d("LOADING", "load: $pageNumber")

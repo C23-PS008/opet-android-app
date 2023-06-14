@@ -1,6 +1,7 @@
-package com.c23ps008.opet.ui.screen.post_camera
+package com.c23ps008.opet.ui.screen.search_breed
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,14 +45,13 @@ object ProcessingImageDestination : NavigationDestination {
 
 @Composable
 fun ProcessingImageScreen(
-    viewModel: ConfirmImageViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToPostPet: (imgUri: String) -> Unit,
+    viewModel: ProcessingImageViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToCalculatedResult: (String) -> Unit,
 ) {
     val context = LocalContext.current
 
     var isProcessing by remember { mutableStateOf(true) }
     var resultLabel by remember { mutableStateOf<String?>(null) }
-    val petType by remember { mutableStateOf("cat") }
 
     LaunchedEffect(Unit) {
         val imageUri = Uri.parse(viewModel.imageUri)
@@ -61,8 +61,8 @@ fun ProcessingImageScreen(
             isProcessing = false
             delay(2000)
             if (resultLabel != null) {
-                // TODO
-                // navigateToPostPet(petType, resultLabel.toString(), viewModel.imageUri)
+                Toast.makeText(context, resultLabel, Toast.LENGTH_SHORT).show()
+                navigateToCalculatedResult(resultLabel.toString())
             }
         }
     }
@@ -101,11 +101,6 @@ fun ProcessingImageContent(modifier: Modifier = Modifier) {
             CircularProgressIndicator(modifier = Modifier.padding(top = 36.dp))
         }
     }
-}
-
-@Composable
-fun ImageNotValidContent(modifier: Modifier) {
-
 }
 
 @Preview(showBackground = true, showSystemUi = true)

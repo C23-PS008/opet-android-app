@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.c23ps008.opet.OPetApplication
 import com.c23ps008.opet.ui.screen.allpet.AllPetViewModel
+import com.c23ps008.opet.ui.screen.calculated_pet_result.CalculatedPetResultViewModel
 import com.c23ps008.opet.ui.screen.find_match_cat.FindMatchCatViewModel
 import com.c23ps008.opet.ui.screen.find_match_dog.FindMatchDogViewModel
 import com.c23ps008.opet.ui.screen.home.HomeViewModel
@@ -19,6 +20,8 @@ import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageViewModel
 import com.c23ps008.opet.ui.screen.post_pet.PostPetViewModel
 import com.c23ps008.opet.ui.screen.profile.ProfileViewModel
 import com.c23ps008.opet.ui.screen.register.RegisterViewModel
+import com.c23ps008.opet.ui.screen.search_breed.ProcessingImageViewModel
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedConfirmImageViewModel
 import com.c23ps008.opet.ui.screen.search_breed.SearchBreedViewModel
 import com.c23ps008.opet.ui.screen.splash.SplashViewModel
 import com.c23ps008.opet.ui.screen.update_pet.UpdatePetViewModel
@@ -106,6 +109,21 @@ object AppViewModelProvider {
         }
         initializer {
             SearchBreedViewModel(
+                opetApplication().container.petRepository,
+                opetApplication().container.localDataStoreRepository
+            )
+        }
+        initializer {
+            SearchBreedConfirmImageViewModel(
+                this.createSavedStateHandle()
+            )
+        }
+        initializer {
+            ProcessingImageViewModel(this.createSavedStateHandle())
+        }
+        initializer {
+            CalculatedPetResultViewModel(
+                this.createSavedStateHandle(),
                 opetApplication().container.petRepository,
                 opetApplication().container.localDataStoreRepository
             )

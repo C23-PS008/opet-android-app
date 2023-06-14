@@ -2,10 +2,12 @@ package com.c23ps008.opet.ui.screen.allpet
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -32,6 +34,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -58,6 +61,7 @@ fun AllPetScreen(
     viewModel: AllPetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onNavigateUp: () -> Unit,
     navigateToDetail: (String) -> Unit,
+    navigateToSearchBreed: () -> Unit,
 ) {
     val petType = viewModel.petType.collectAsState(initial = "all")
     val lazyPetAdoptionList = viewModel.pagingSource.collectAsLazyPagingItems()
@@ -71,6 +75,7 @@ fun AllPetScreen(
         onPetTypeChange = {
             viewModel.updatePetType(it)
         },
+        navigateToSearchBreed = navigateToSearchBreed
     )
 }
 
@@ -82,6 +87,7 @@ fun AllPetScreenContent(
     lazyData: LazyPagingItems<PetAdoptionItem>?,
     petType: String = "all",
     onPetTypeChange: (String) -> Unit,
+    navigateToSearchBreed: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -91,56 +97,66 @@ fun AllPetScreenContent(
             AllPetTopBar(
                 onNavigateUp = onNavigateUp,
                 petType = petType,
-                onPetTypeChange = onPetTypeChange
+                onPetTypeChange = onPetTypeChange,
+                navigateToSearchBreed = navigateToSearchBreed
             )
         }) { paddingValues ->
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(bottom = 16.dp, top = 12.dp)
-        ) {
-            if (lazyData?.loadState?.refresh == LoadState.Loading) {
-                if (lazyData.loadState.append == LoadState.Loading) {
-                    item(span = { GridItemSpan(2) }) {
-                        Text(
-                            text = "Waiting for items to load from the backend",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(Alignment.CenterHorizontally)
+        Box(modifier = modifier.fillMaxSize().padding(paddingValues)) {
+            if (lazyData?.loadState?.refresh is LoadState.Loading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else
+                if (lazyData?.itemCount == 0 && lazyData.loadState.append !is LoadState.Loading) {
+                    Text(
+                        text = "Pet not found!",
+                        modifier = Modifier
+                            .padding(top = 72.dp)
+                            .align(Alignment.Center),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    LazyVerticalGrid(
+                        modifier = Modifier,
+                        columns = GridCells.Fixed(2),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(
+                            bottom = 16.dp,
+                            top = 16.dp,
+                            start = 16.dp,
+                            end = 16.dp
                         )
+                    ) {
+                        if (lazyData != null) {
+                            items(count = lazyData.itemCount, key = lazyData.itemKey()) { index ->
+                                val data = lazyData[index]
+                                val cardState =
+                                    PetCardState(
+                                        data?.petId.toString(),
+                                        data?.photoUrl.toString(),
+                                        data?.breed.toString(),
+                                        data?.name.toString(),
+                                        getCityName(context, data?.lat as Double, data.lon as Double)
+                                    )
+                                PetCard(
+                                    data = cardState,
+                                    onClick = { navigateToDetail(data.petId.toString()) })
+                            }
+                        }
+                        if (lazyData?.loadState?.append == LoadState.Loading) {
+                            item(span = { GridItemSpan(2) }) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentWidth(
+                                            Alignment.CenterHorizontally
+                                        )
+                                )
+                            }
+                        }
                     }
                 }
-            }
-            if (lazyData != null) {
-                items(count = lazyData.itemCount, key = lazyData.itemKey()) { index ->
-                    val data = lazyData[index]
-                    val cardState =
-                        PetCardState(
-                            data?.petId.toString(),
-                            data?.photoUrl.toString(),
-                            data?.breed.toString(),
-                            data?.name.toString(),
-                            getCityName(context, data?.lat as Double, data.lon as Double)
-                        )
-                    PetCard(data = cardState, onClick = { navigateToDetail(data.petId.toString()) })
-                }
-            }
-            if (lazyData?.loadState?.append == LoadState.Loading) {
-                item(span = { GridItemSpan(2) }) {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentWidth(
-                                Alignment.CenterHorizontally
-                            )
-                    )
-                }
-            }
         }
     }
 }
@@ -152,6 +168,7 @@ fun AllPetTopBar(
     onNavigateUp: () -> Unit,
     petType: String,
     onPetTypeChange: (String) -> Unit,
+    navigateToSearchBreed: () -> Unit,
 ) {
     Column(modifier = modifier) {
         TopAppBar(title = { Text(text = "Pets for Adoption") }, navigationIcon = {
@@ -165,7 +182,7 @@ fun AllPetTopBar(
             }
         },
             actions = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { navigateToSearchBreed() }) {
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = stringResource(R.string.menu_search)
@@ -230,6 +247,8 @@ fun AllPetScreenContentPreview() {
             onNavigateUp = {},
             navigateToDetail = {},
             lazyData = null,
-            onPetTypeChange = {})
+            onPetTypeChange = {},
+            navigateToSearchBreed = {}
+        )
     }
 }

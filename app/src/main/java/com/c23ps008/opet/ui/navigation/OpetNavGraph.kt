@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.c23ps008.opet.ui.screen.allpet.AllPetDestination
 import com.c23ps008.opet.ui.screen.allpet.AllPetScreen
+import com.c23ps008.opet.ui.screen.calculated_pet_result.CalculatedPetResultDestination
+import com.c23ps008.opet.ui.screen.calculated_pet_result.CalculatedPetResultScreen
 import com.c23ps008.opet.ui.screen.find_match_cat.FindMatchCatDestination
 import com.c23ps008.opet.ui.screen.find_match_cat.FindMatchCatScreen
 import com.c23ps008.opet.ui.screen.find_match_dog.FindMatchDogDestination
@@ -29,7 +31,7 @@ import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageDestination
 import com.c23ps008.opet.ui.screen.post_camera.ConfirmImageScreen
 import com.c23ps008.opet.ui.screen.post_camera.PostCameraDestination
 import com.c23ps008.opet.ui.screen.post_camera.PostCameraScreen
-import com.c23ps008.opet.ui.screen.post_camera.ProcessingImageDestination
+import com.c23ps008.opet.ui.screen.search_breed.ProcessingImageDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetDestination
 import com.c23ps008.opet.ui.screen.post_pet.PostPetScreen
 import com.c23ps008.opet.ui.screen.post_pet.UploadPetSuccessDestination
@@ -38,8 +40,13 @@ import com.c23ps008.opet.ui.screen.profile.ProfileDestination
 import com.c23ps008.opet.ui.screen.profile.ProfileScreen
 import com.c23ps008.opet.ui.screen.register.RegisterDestination
 import com.c23ps008.opet.ui.screen.register.RegisterScreen
+import com.c23ps008.opet.ui.screen.search_breed.ProcessingImageScreen
 import com.c23ps008.opet.ui.screen.search_breed.SearchBreedDestination
 import com.c23ps008.opet.ui.screen.search_breed.SearchBreedScreen
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedCameraDestination
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedCameraScreen
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedConfirmImageDestination
+import com.c23ps008.opet.ui.screen.search_breed.SearchBreedConfirmImageScreen
 import com.c23ps008.opet.ui.screen.splash.SplashDestination
 import com.c23ps008.opet.ui.screen.splash.SplashScreen
 import com.c23ps008.opet.ui.screen.update_pet.UpdatePetDestination
@@ -117,7 +124,11 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                         inclusive = true
                     }
                 }
-            })
+            },
+                onNavigateUp = {
+                    navController.navigateUp()
+                }
+            )
         }
         composable(UploadPetSuccessDestination.route) {
             UploadPetSuccessScreen(navigateToMyPost = {
@@ -154,12 +165,12 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 type = NavType.StringType
             })
         ) {
-            UpdatePetScreen()
+            UpdatePetScreen(onNavigateUp = { navController.navigateUp() })
         }
         composable(PostCameraDestination.route) {
             PostCameraScreen(onCaptureSuccess = {
                 navController.navigate(
-                    "${PostPetDestination.route}/${
+                    "${ConfirmImageDestination.route}/${
                         URLEncoder.encode(
                             it,
                             "UTF-8"
@@ -177,12 +188,76 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
             ConfirmImageScreen(
                 onNavigateUp = { navController.navigateUp() },
                 navigateToProcessingImage = {
+                    navController.popBackStack()
                     navController.navigate(
-                        "${ProcessingImageDestination.route}/${
+                        "${PostPetDestination.route}/${
                             URLEncoder.encode(
                                 it,
                                 "UTF-8"
                             )
+                        }"
+                    )
+                })
+        }
+        composable(MapNearbyPetDestination.route) {
+            MapNearbyPetScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToPetDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
+        }
+        composable(FindMatchDogDestination.route) {
+            FindMatchDogScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToCalculatedResult = { breed ->
+                    navController.navigate("${CalculatedPetResultDestination.route}/$breed") {
+                        popUpTo(SearchBreedCameraDestination.route) {
+                            inclusive = true
+                        }
+                    }
+                })
+        }
+        composable(FindMatchCatDestination.route) {
+            FindMatchCatScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToCalculatedResult = { breed ->
+                    navController.navigate("${CalculatedPetResultDestination.route}/$breed") {
+                        popUpTo(SearchBreedCameraDestination.route) {
+                            inclusive = true
+                        }
+                    }
+                })
+        }
+        composable(SearchBreedDestination.route) {
+            SearchBreedScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") },
+                navigateToSearchBreedCamera = { navController.navigate(SearchBreedCameraDestination.route) }
+            )
+        }
+        composable(SearchBreedCameraDestination.route) {
+            SearchBreedCameraScreen(
+                onCaptureSuccess = {
+                    navController.navigate(
+                        "${SearchBreedConfirmImageDestination.route}/${
+                            URLEncoder.encode(
+                                it, "UTF-8"
+                            )
+                        }"
+                    )
+                },
+                onNavigateUp = { navController.navigateUp() })
+        }
+        composable(
+            route = SearchBreedConfirmImageDestination.routeWithArgs,
+            arguments = listOf(navArgument(SearchBreedConfirmImageDestination.imgUriArg) {
+                type = NavType.StringType
+            })
+        ) {
+            SearchBreedConfirmImageScreen(
+                onNavigateUp = { navController.navigateUp() },
+                navigateToProcessingImage = {
+                    navController.navigate(
+                        "${ProcessingImageDestination.route}/${
+                            URLEncoder.encode(it, "UTF-8")
                         }"
                     )
                 })
@@ -193,36 +268,26 @@ fun OPetNavGraph(navController: NavHostController, modifier: Modifier = Modifier
                 type = NavType.StringType
             })
         ) {
-            // ProcessingImageScreen(navigateToPostPet = { petType, petBreed, imageUri ->
-            //     navController.navigate(
-            //         "${PostPetDestination.route}/$petType/$petBreed/${
-            //             URLEncoder.encode(
-            //                 imageUri,
-            //                 "UTF-8"
-            //             )
-            //         }"
-            //     ) {
-            //         popUpTo(PostCameraDestination.route) {
-            //             inclusive = true
-            //         }
-            //     }
-            // })
+            ProcessingImageScreen(navigateToCalculatedResult = { petBreed ->
+                navController.navigate("${CalculatedPetResultDestination.route}/$petBreed") {
+                    popUpTo(SearchBreedCameraDestination.route) {
+                        inclusive = true
+                    }
+                }
+            })
         }
-        composable(MapNearbyPetDestination.route) {
-            MapNearbyPetScreen(
-                onNavigateUp = { navController.navigateUp() },
-                navigateToPetDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
-        }
-        composable(FindMatchDogDestination.route) {
-            FindMatchDogScreen(onNavigateUp = { navController.navigateUp() })
-        }
-        composable(FindMatchCatDestination.route) {
-            FindMatchCatScreen(onNavigateUp = { navController.navigateUp() })
-        }
-        composable(SearchBreedDestination.route) {
-            SearchBreedScreen(
-                onNavigateUp = { navController.navigateUp() },
-                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") })
+        composable(
+            route = CalculatedPetResultDestination.routeWithArgs,
+            arguments = listOf(navArgument(CalculatedPetResultDestination.petBreed) {
+                type = NavType.StringType
+            })
+        ) {
+            CalculatedPetResultScreen(
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                navigateToDetail = { navController.navigate("${PetDetailDestination.route}/$it") }
+            )
         }
     }
 }

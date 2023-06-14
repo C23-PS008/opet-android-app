@@ -67,7 +67,6 @@ import com.c23ps008.opet.ui.screen.post_pet.FormSectionHeader
 import com.c23ps008.opet.ui.screen.post_pet.InputLocation
 import com.c23ps008.opet.ui.screen.post_pet.InputPetAbout
 import com.c23ps008.opet.ui.screen.post_pet.InputPetName
-import com.c23ps008.opet.ui.screen.post_pet.PostPetContent
 import com.c23ps008.opet.ui.screen.post_pet.SelectInputPetBreed
 import com.c23ps008.opet.ui.screen.post_pet.SelectInputPetType
 import com.c23ps008.opet.ui.theme.OPetTheme
@@ -86,6 +85,7 @@ object UpdatePetDestination : NavigationDestination {
 fun UpdatePetScreen(
     viewModel: UpdatePetViewModel = viewModel(factory = AppViewModelProvider.Factory),
     permissionsViewModel: PermissionsViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onNavigateUp: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -163,6 +163,7 @@ fun UpdatePetScreen(
 
                 is UiState.Success -> {
                     UpdatePetContent(
+                        onNavigateUp = onNavigateUp,
                         petDetailData = uiState.data.data as PetDetailData,
                         onUpdateClick = { updatePetFormData, setLoading ->
                             coroutineScope.launch {
@@ -199,6 +200,7 @@ fun UpdatePetContent(
     modifier: Modifier = Modifier,
     petDetailData: PetDetailData,
     onUpdateClick: (UpdatePetFormData, (Boolean) -> Unit) -> Unit,
+    onNavigateUp: () -> Unit,
 ) {
     var formData by remember {
         mutableStateOf(
@@ -239,7 +241,8 @@ fun UpdatePetContent(
             modifier = Modifier.padding(paddingValues),
             imageUrl = petDetailData.photoUrl.toString(),
             formData = formData,
-            onFormDataChange = { formData = it }
+            onFormDataChange = { formData = it },
+            onNavigateUp = onNavigateUp
         )
     }
 }
@@ -251,6 +254,7 @@ fun UpdatePetEntry(
     imageUrl: String,
     formData: UpdatePetFormData,
     onFormDataChange: (UpdatePetFormData) -> Unit,
+    onNavigateUp: () -> Unit
 ) {
     val context = LocalContext.current
 
@@ -340,7 +344,7 @@ fun UpdatePetEntry(
                 contentDescription = "null",
                 contentScale = ContentScale.Crop
             )
-            FilledTonalIconButton(onClick = { /*TODO*/ }, modifier = Modifier.padding(16.dp)) {
+            FilledTonalIconButton(onClick = { onNavigateUp() }, modifier = Modifier.padding(16.dp)) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = stringResource(id = R.string.menu_back)
@@ -485,6 +489,6 @@ fun BottomAction(modifier: Modifier = Modifier, onSubmit: () -> Unit, isEnabled:
 @Composable
 fun PostPetContentPreview() {
     OPetTheme {
-        PostPetContent(imageUri = "", onPostClick = { _, _ -> }, file = null)
+        UpdatePetContent(onUpdateClick = { _, _ -> }, petDetailData = PetDetailData(), onNavigateUp = {})
     }
 }
