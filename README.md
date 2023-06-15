@@ -10,6 +10,9 @@ There are some main features in this version (v0.0.1-alpha pre-release)
 - Find a pet for adoption
 - Search pet for adoption with image
 
+## Overview
+https://github.com/C23-PS008/.github/assets/72180474/b1be0e9d-285f-4720-860c-338815b55b52
+
 ## Try / Download the App
 [OPet v0.0.1-alpha pre-release](https://github.com/C23-PS008/opet-android-app/releases/tag/v0.0.1-alpha)
 
