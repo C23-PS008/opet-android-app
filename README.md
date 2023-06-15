@@ -13,6 +13,9 @@ There are some main features in this version (v0.0.1-alpha pre-release)
 ## Try / Download the App
 [OPet v0.0.1-alpha pre-release](https://github.com/C23-PS008/opet-android-app/releases/tag/v0.0.1-alpha)
 
+## Android Implementation
+![Android Implementation](./docs/image/android-implementation.png)
+
 ## How to run this project?
 
 ### Requirements
