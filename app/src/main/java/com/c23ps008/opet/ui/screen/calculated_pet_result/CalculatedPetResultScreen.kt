@@ -101,7 +101,7 @@ fun CalculatedPetResultContent(
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         contentPadding = PaddingValues(
                             bottom = 16.dp,
-                            top = 72.dp,
+                            top = 16.dp,
                             start = 16.dp,
                             end = 16.dp
                         )
