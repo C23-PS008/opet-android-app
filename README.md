@@ -5,15 +5,30 @@ OPet is an app designed to connect pet owners who are no longer able to care for
 
 ## How to run this project?
 
-### Google Maps API KEY
+### Requirements
+
+#### JAVA VERSION
+Java 17
+
+#### Android Studio
+This is build with Android Studio Patch 1, you can use any other version but if any crash or error you can use the latest version of android studio.
+
+[Android Studio Archive](https://developer.android.com/studio/archive)
+
+### Installation
+
+##### 1. Clone Repository
+
+```
+git clone https://github.com/C23-PS008/opet-android-app.git
+```
+
+##### 2. TODO
 - Create local.properties if not exists on project root
 - Add MAPS_API_KEY=YOUR_GMAP_APIKEY
 - Add BACKEND_API_ENDPOINT_URL=BACKEND_BASE_URL
 - DOG_PREDICT_API_ENDPOINT_URL=BASE_URL
 - CAT_PREDICT_API_ENDPOINT_URL=BASE_URL
-
-### JAVA VERSION
-Java 17
 
 ## Tools or Dependency
 - [Jetpack Compose](https://developer.android.com/jetpack/compose)
