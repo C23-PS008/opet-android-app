@@ -3,6 +3,13 @@
 ## About this App
 OPet is an app designed to connect pet owners who are no longer able to care for their pets with individuals seeking to adopt. Our goal is to reduce the number of pets that are not cared for by their owners and to provide a safe and loving home for every pet.
 
+## Features
+There are some main features in this version (v1.0.0 pre-release)
+- Post a pet for adoption
+- Manage a pet for adoption post
+- Find a pet for adoption
+- Search pet for adoption with image
+
 ## How to run this project?
 
 ### Requirements
@@ -44,12 +51,6 @@ git clone https://github.com/C23-PS008/opet-android-app.git
 - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
 - [Data Store](https://developer.android.com/topic/libraries/architecture/datastore)
 
-## Features
-There are some main features in this version (v1.0.0 pre-release)
-- Post a pet for adoption
-- Manage a pet for adoption post
-- Find a pet for adoption
-- Search pet for adoption with image
 
 ## Try / Download the App
 [OPet v1.0.0 pre-release](https://github.com/C23-PS008/opet-android-app/releases/tag/v1.0.0)
