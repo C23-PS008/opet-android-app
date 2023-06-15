@@ -10,6 +10,9 @@ There are some main features in this version (v1.0.0 pre-release)
 - Find a pet for adoption
 - Search pet for adoption with image
 
+## Try / Download the App
+[OPet v1.0.0 pre-release](https://github.com/C23-PS008/opet-android-app/releases/tag/v1.0.0)
+
 ## How to run this project?
 
 ### Requirements
@@ -50,7 +53,3 @@ git clone https://github.com/C23-PS008/opet-android-app.git
 - [CameraX](https://developer.android.com/training/camerax)
 - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview)
 - [Data Store](https://developer.android.com/topic/libraries/architecture/datastore)
-
-
-## Try / Download the App
-[OPet v1.0.0 pre-release](https://github.com/C23-PS008/opet-android-app/releases/tag/v1.0.0)
