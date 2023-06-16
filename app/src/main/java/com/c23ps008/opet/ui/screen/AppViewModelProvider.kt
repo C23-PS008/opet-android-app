@@ -29,7 +29,10 @@ import com.c23ps008.opet.ui.screen.update_pet.UpdatePetViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            SplashViewModel(opetApplication().container.localDataStoreRepository)
+            SplashViewModel(
+                opetApplication().container.localDataStoreRepository,
+                opetApplication().container.profileRepository
+            )
         }
         initializer {
             RegisterViewModel(opetApplication().container.authRepository)
